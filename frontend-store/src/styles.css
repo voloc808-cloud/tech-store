@@ -1,1 +1,52 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global theme (shop hiện đại) */
+:root{
+  --primary:#1e6edb;
+  --primary2:#2f9df6;
+  --danger:#e74c3c;
+  --muted:#7f8c8d;
+  --text:#1f2a37;
+  --border:#eaeaea;
+  --bg:#f6f8fc;
+  --card:#ffffff;
+  --radius:16px;
+  --shadow: 0 10px 28px rgba(15, 59, 110, .10);
+  --shadowSoft: 0 6px 18px rgba(0,0,0,.06);
+}
+
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(47,157,246,.18), transparent 50%),
+              radial-gradient(900px 500px at 90% 0%, rgba(30,110,219,.14), transparent 55%),
+              var(--bg);
+  color:var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+button:focus, a:focus, input:focus, textarea:focus{
+  outline:none;
+}
+
+
+:focus-visible{
+  box-shadow: 0 0 0 4px rgba(47,157,246,.25);
+  border-color: rgba(47,157,246,.65) !important;
+}
+
+/* Utility */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.7);
+  font-weight:900;
+  font-size:12px;
+}
+.badge.danger{border-color: rgba(231,76,60,.35); color: #c0392b; background: rgba(231,76,60,.08);}
+.badge.ok{border-color: rgba(47,157,246,.35); color:#1d6fb8; background: rgba(47,157,246,.10);}
+
+

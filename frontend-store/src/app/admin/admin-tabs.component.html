@@ -1,0 +1,24 @@
+<div class="tabs">
+  <button
+    type="button"
+    *ngFor="let t of tabs"
+    class="tab"
+    [class.active]="active === t.key"
+    (click)="setActive(t.key)"
+  >
+    {{ t.label }}
+  </button>
+</div>
+
+<div class="panel">
+  <div class="headerRow">
+    <div class="userInfo">
+      <div class="welcome">Xin chào, {{ auth.getCurrentUser()?.username }}</div>
+      <div class="role">Vai trò: {{ auth.getCurrentUser()?.role }}</div>
+    </div>
+
+    <button class="logout" type="button" (click)="logout()">Đăng xuất</button>
+  </div>
+</div>
+
+

@@ -1,0 +1,29 @@
+<div class="wrap">
+  <div class="card">
+    <h2>📝 Đăng ký tài khoản</h2>
+
+    <form (ngSubmit)="register()" class="form">
+      <label>
+        Username
+        <input name="username" [(ngModel)]="username" required />
+      </label>
+
+      <label>
+        Password
+        <input name="password" type="password" [(ngModel)]="password" required />
+      </label>
+
+      <label>
+        Nhập lại password
+        <input name="confirm" type="password" [(ngModel)]="confirm" required />
+      </label>
+
+      <button type="submit" class="primary">Đăng ký</button>
+
+      <div *ngIf="error" class="error">{{ error }}</div>
+
+      <button type="button" class="linkBtn" (click)="goLogin()">Đã có tài khoản? Đăng nhập</button>
+    </form>
+  </div>
+</div>
+

@@ -13,23 +13,19 @@ app.use(express.json());
 // ĐÂY CHÍNH LÀ MOCK DATA 
 //nhung trong thuc te thi dung mysql, sqlserver, mongodb
 let products = [
-    { 
-        id: 1, 
-        name: 'Laptop Dell XPS', 
-        price: 1500, 
-        stock: 10 
-    },
-    { 
-        id: 2, 
-        name: 'iPhone 15 Pro', 
-        price: 1000, 
-        stock: 5 
+    {
+        id: 1,
+        name: 'iPhone 15',
+        price: 1200,
+        stock: 10,
+        image: 'https://picsum.photos/300?1'
     },
     {
-        id: 3,
-        name: 'Google Pixel 10 XL',
+        id: 2,
+        name: 'MacBook M3',
         price: 2000,
-        stock: 10
+        stock: 5,
+        image: 'https://picsum.photos/300?2'
     }
 ];
 
@@ -75,12 +71,11 @@ app.post('/products', (req, res) => {
 //update product
 //-----------------------------
 
-app.put('/products', (req, res) => {
+app.put('/products/:id', (req, res) => {
     const id = parseInt(req.params.id);
-
     const index = products.findIndex(p => p.id === id);
 
-    if (!product){
+    if (index === -1) {
         return res.status(404).json({
             message: 'Product not found'
         });
@@ -88,11 +83,12 @@ app.put('/products', (req, res) => {
 
     const updateProduct = req.body;
 
-    products[index] = updateProduct;
+    // Đảm bảo id không bị lệch nếu client không gửi id
+    products[index] = { ...products[index], ...updateProduct, id };
 
     res.json({
         message: 'Product updated successfully',
-        data: updateProduct
+        data: products[index]
     });
 });
 

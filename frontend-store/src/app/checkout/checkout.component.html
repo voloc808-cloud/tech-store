@@ -1,0 +1,71 @@
+<div class="page checkout-shell">
+  <div class="shop-header">
+    <div class="title">
+      <h2>💳 Checkout</h2>
+      <div class="subtitle">Xác nhận thông tin nhận hàng</div>
+    </div>
+
+    <div class="actions">
+      <button class="ghost" type="button" (click)="router.navigateByUrl('/cart')">← Giỏ hàng</button>
+    </div>
+  </div>
+
+
+  <div *ngIf="message" class="shop-message">{{ message }}</div>
+
+  <div class="checkout-grid">
+    <section class="shop-card" style="padding: 14px;">
+      <h3 class="section-title">Thông tin nhận hàng</h3>
+
+      <div class="field">
+        <label>Họ và tên</label>
+        <input [(ngModel)]="fullName" placeholder="Nguyễn Văn A" />
+      </div>
+
+      <div class="field">
+        <label>Số điện thoại</label>
+        <input [(ngModel)]="phone" placeholder="0123 456 789" />
+      </div>
+
+      <div class="field">
+        <label>Địa chỉ</label>
+        <input [(ngModel)]="address" placeholder="Số nhà, đường, phường/xã" />
+      </div>
+
+      <div class="field">
+        <label>Ghi chú (tuỳ chọn)</label>
+        <textarea rows="3" [(ngModel)]="note" placeholder="Giao giờ hành chính..." ></textarea>
+      </div>
+
+      <div class="cta" style="margin-top: 14px;">
+        <button class="primary" type="button" (click)="placeOrder()" [disabled]="placing">
+          {{ placing ? 'Đang đặt...' : 'Đặt hàng' }}
+        </button>
+      </div>
+    </section>
+
+    <aside class="shop-card summary-card" style="padding: 14px;">
+      <h3 class="section-title">Đơn hàng</h3>
+
+      <div *ngFor="let it of items" class="item" style="border-top: 1px solid #f3f3f3; padding-top: 10px; margin-top: 10px;">
+        <div class="line">
+          <span class="name">{{ it.name }}</span>
+          <span class="qty">x{{ it.quantity }}</span>
+        </div>
+        <div class="money">{{ getMoney(it.price * it.quantity) }}</div>
+      </div>
+
+      <div class="total">
+        <div class="label">Tạm tính</div>
+        <div class="value">{{ getMoney(subtotal) }}</div>
+      </div>
+
+
+      <div class="note" style="margin-top: 12px; color: #7f8c8d; font-size: 13px; font-weight: 700;">
+        * Demo: checkout lưu đơn vào localStorage
+      </div>
+    </aside>
+  </div>
+</div>
+
+

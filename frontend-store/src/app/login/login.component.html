@@ -1,0 +1,42 @@
+<div class="wrap">
+  <div class="card">
+    <h2>🔐 Đăng nhập</h2>
+
+    <div class="hint">
+      Tài khoản mock:
+      <div>• admin / admin123</div>
+      <div>• user / user123</div>
+      <div class="muted">Hoặc đăng ký user ở /register</div>
+    </div>
+
+
+    <form (ngSubmit)="submit()" #f="ngForm" class="form">
+      <label>
+        Username
+        <input name="username" [(ngModel)]="username" required />
+      </label>
+
+      <label>
+        Password
+        <input
+          name="password"
+          type="password"
+          [(ngModel)]="password"
+          required
+        />
+      </label>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Đang đăng nhập...' : 'Đăng nhập' }}
+      </button>
+
+      <div *ngIf="error" class="error">{{ error }}</div>
+    </form>
+
+    <button type="button" class="linkBtn" (click)="goHome()">Về trang chủ</button>
+    <button type="button" class="linkBtn" (click)="router.navigateByUrl('/register')">Đăng ký</button>
+
+
+  </div>
+</div>
+

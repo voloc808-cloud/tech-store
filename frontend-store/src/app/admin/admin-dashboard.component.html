@@ -1,0 +1,181 @@
+<div class="page">
+  <header class="topbar">
+    <div>
+      <div class="title">🛠️ Admin Dashboard</div>
+      <div class="sub">Quản lý cửa hàng</div>
+    </div>
+  </header>
+
+  <main class="content">
+    <!-- Admin Tabs (hàng hoá / đơn hàng / tài khoản) -->
+    <section style="grid-column: 1 / -1;">
+      <app-admin-tabs></app-admin-tabs>
+    </section>
+
+    <!-- PRODUCTS TAB -->
+    <ng-container *ngIf="activeTab === 'products'">
+      <!-- CREATE/EDIT FORM -->
+      <section class="panel">
+        <h3 *ngIf="mode==='create'">➕ Thêm sản phẩm</h3>
+        <h3 *ngIf="mode==='edit'">✏️ Sửa sản phẩm (id: {{ editId }})</h3>
+
+        <div class="grid">
+          <label>
+            Tên sản phẩm
+            <input [(ngModel)]="form.name" placeholder="VD: iPhone" />
+          </label>
+          <label>
+            Giá
+            <input type="number" [(ngModel)]="form.price" />
+          </label>
+          <label>
+            Số lượng trong kho
+            <input type="number" [(ngModel)]="form.stock" />
+          </label>
+        </div>
+
+        <div class="imageBox">
+          <label>
+            Ảnh sản phẩm (chọn file)
+            <input type="file" accept="image/*" (change)="onImageSelected($event)" />
+          </label>
+
+          <div class="imgPreview">
+            <img
+              [src]="previewImage || form.image || '/assets/product-placeholder.png'"
+              [alt]="form.name || 'Ảnh sản phẩm'"
+            />
+          </div>
+          <div class="hint">Hệ thống lưu ảnh dạng base64 (JSON) theo backend mock hiện tại.</div>
+        </div>
+
+        <div class="btnRow">
+          <button type="button" (click)="submit()" class="primary">
+            {{ mode==='create' ? 'Tạo mới' : 'Lưu thay đổi' }}
+          </button>
+          <button
+            type="button"
+            (click)="resetForm()"
+            class="secondary"
+            *ngIf="mode==='edit'"
+          >
+            Hủy
+          </button>
+        </div>
+
+        <div *ngIf="error" class="error">{{ error }}</div>
+      </section>
+
+      <!-- LIST + DETAIL -->
+      <section class="panel">
+        <h3>📦 Danh sách hàng hoá</h3>
+
+        <div *ngIf="loading" class="loading">Đang tải...</div>
+
+        <table class="table" *ngIf="products.length > 0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Hình</th>
+              <th>Tên</th>
+              <th>Giá</th>
+              <th>Stock</th>
+              <th style="width: 240px;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of products">
+              <td>{{ p.id }}</td>
+              <td>
+                <img class="adminThumb" [src]="p.image || '/assets/product-placeholder.png'" [alt]="p.name" />
+              </td>
+              <td>{{ p.name }}</td>
+              <td>${{ p.price }}</td>
+              <td>{{ p.stock }}</td>
+              <td>
+                <button class="mini" type="button" (click)="startEdit(p)">Sửa</button>
+                <button class="mini" type="button" (click)="router.navigateByUrl('/products/' + p.id)">
+                  Chi tiết
+                </button>
+                <button class="mini danger" type="button" (click)="deleteProduct(p.id)" [disabled]="loading">
+                  Xóa
+                </button>
+              </td>
+            </tr>
+          </tbody>
+
+
+        </table>
+
+        <div *ngIf="!loading && products.length === 0" class="empty">
+          Chưa có sản phẩm.
+        </div>
+      </section>
+    </ng-container>
+
+
+    <!-- ORDERS TAB -->
+    <ng-container *ngIf="activeTab === 'orders'">
+      <section class="panel" style="grid-column: 1 / -1;">
+        <h3>🧾 Đơn hàng</h3>
+        <div *ngIf="ordersLoading" class="loading">Đang tải...</div>
+
+        <table class="table" *ngIf="!ordersLoading && orders.length > 0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Người nhận</th>
+              <th>Địa chỉ</th>
+              <th>Ngày</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let o of orders">
+              <td>{{ o.id }}</td>
+              <td>{{ o.fullName }}</td>
+              <td>{{ o.address }}</td>
+              <td>{{ o.createdAt | date:'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="!ordersLoading && orders.length === 0" class="empty">
+          Chưa có đơn hàng.
+        </div>
+      </section>
+    </ng-container>
+
+    <!-- ACCOUNT TAB -->
+    <ng-container *ngIf="activeTab === 'account'">
+      <section class="panel" style="grid-column: 1 / -1;">
+        <h3>👤 Tài khoản</h3>
+
+        <div class="info">
+          <div><b>Username:</b> {{ auth.getCurrentUser()?.username }}</div>
+          <div><b>Role:</b> {{ auth.getCurrentUser()?.role }}</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4>📌 Danh sách tài khoản đã đăng ký</h4>
+        <div *ngIf="registeredUsers.length === 0" class="muted">Chưa có tài khoản đăng ký.</div>
+
+        <table *ngIf="registeredUsers.length > 0" class="table" style="margin-top: 8px;">
+          <thead>
+            <tr>
+              <th>Username</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of registeredUsers">
+              <td>{{ u }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </ng-container>
+  </main>
+</div>
+
+
+

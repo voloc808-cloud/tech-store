@@ -1,0 +1,124 @@
+:host { display:block; }
+
+.wrap {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.card {
+  width: 420px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(234,234,234,.95);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: 0 10px 22px rgba(0,0,0,.04);
+  overflow:hidden;
+  position:relative;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-120px -120px auto -120px;
+  height:220px;
+  background: radial-gradient(circle at 30% 30%, rgba(47,157,246,.30), transparent 55%),
+              radial-gradient(circle at 70% 0%, rgba(30,110,219,.25), transparent 60%);
+  pointer-events:none;
+}
+
+h2 {
+  margin: 0 0 10px;
+  color: #2c3e50;
+  position:relative;
+}
+
+.hint {
+  background: rgba(248,249,250,.9);
+  border: 1px solid rgba(234,234,234,.95);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #444;
+  position:relative;
+}
+
+.muted { color: #7f8c8d; margin-top: 6px; font-weight: 700; }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position:relative;
+}
+
+label {
+  font-size: 13px;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  outline: none;
+  background:#fff;
+}
+
+button[type='submit'] {
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 0;
+  background: linear-gradient(135deg,var(--primary2),var(--primary));
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(30,110,219,.18);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+
+button[type='submit']:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+  box-shadow: 0 16px 34px rgba(30,110,219,.25);
+}
+
+button[type='submit'][disabled] {
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow:none;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: -6px;
+}
+
+.linkBtn {
+  width: 100%;
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid rgba(220,220,220,.9);
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 900;
+  border-radius: 14px;
+  padding: 10px 12px;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.linkBtn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(30,110,219,.14);
+  border-color: rgba(47,157,246,.5);
+}
+
+

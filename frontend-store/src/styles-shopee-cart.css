@@ -1,0 +1,230 @@
+/* Shopee-like cart/checkout UI tweaks (scoped via class prefixes) */
+
+.cart-shell,
+.checkout-shell {
+  background: #f5f6f8;
+  min-height: calc(100vh - 0px);
+}
+
+.page {
+  max-width: 1200px;
+}
+
+/* Reusable header */
+.shop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0 10px;
+}
+
+.shop-header .title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.shop-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.shop-header .subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.shop-header .actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Cards */
+.shop-card {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.03);
+  overflow: hidden;
+}
+
+.shop-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.shop-table th {
+  text-align: left;
+  font-size: 13px;
+  color: #555;
+  background: #f7f7f7;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.shop-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  color: #333;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 1fr 110px 160px 120px;
+  gap: 12px;
+  align-items: center;
+}
+
+.product-name {
+  font-weight: 900;
+  color: #111827;
+}
+
+.kpi-price {
+  color: #e74c3c;
+  font-weight: 1000;
+}
+
+/* Quantity */
+.qty-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.qty-stepper {
+  display: inline-flex;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.qty-stepper button {
+  background: #fff;
+  border: 0;
+  padding: 8px 10px;
+  font-weight: 1000;
+  cursor: pointer;
+}
+
+.qty-stepper button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.qty-stepper input {
+  width: 64px;
+  border: 0;
+  outline: none;
+  text-align: center;
+  padding: 8px 0;
+  font-weight: 900;
+}
+
+/* Layout like shopee */
+.shop-grid {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .shop-grid { grid-template-columns: 1fr; }
+}
+
+/* Summary */
+.summary-card {
+  padding: 14px;
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.summary-row .label {
+  color: #6b7280;
+  font-weight: 800;
+}
+
+.summary-row .value {
+  font-weight: 1000;
+  color: #111827;
+}
+
+.cta {
+  margin-top: 12px;
+}
+
+.cta .primary {
+  width: 100%;
+}
+
+/* Checkout */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.85fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .checkout-grid { grid-template-columns: 1fr; }
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 1000;
+  color: #111827;
+  margin: 0;
+}
+
+.field {
+  margin-top: 10px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+/* Message */
+.shop-message {
+  background: rgba(47,157,246,.10);
+  border: 1px solid rgba(47,157,246,.25);
+  color: #1d6fb8;
+  font-weight: 1000;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 10px 0 14px;
+}
+
+.shop-message.error {
+  background: rgba(231,76,60,.08);
+  border-color: rgba(231,76,60,.28);
+  color: #c0392b;
+}
+

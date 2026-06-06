@@ -1,0 +1,72 @@
+<div class="page cart-shell">
+  <div class="shop-header">
+    <div class="title">
+      <h2>🛒 Giỏ hàng</h2>
+      <div class="subtitle">{{ items.length }} sản phẩm</div>
+    </div>
+
+    <div class="actions">
+      <button class="ghost" type="button" (click)="clear()">Xóa hết</button>
+    </div>
+  </div>
+
+  <div *ngIf="items.length === 0" class="empty">
+    Giỏ hàng trống.
+    <button class="primary" type="button" (click)="router.navigateByUrl('/products')">Mua sắm ngay</button>
+  </div>
+
+  <div *ngIf="items.length > 0" class="shop-grid">
+    <section class="shop-card">
+      <table class="shop-table">
+        <thead>
+          <tr>
+            <th>Sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Thành tiền</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let it of items">
+            <td>
+              <div class="product-name">{{ it.name }}</div>
+            </td>
+            <td class="kpi-price">{{ it.price }}</td>
+
+            <td>
+              <div class="qty-wrap">
+                <div class="qty-stepper">
+                  <button type="button" (click)="updateQty(it, it.quantity - 1)" [disabled]="it.quantity <= 0">-</button>
+                  <input type="number" min="0" [(ngModel)]="it.quantity" (change)="updateQty(it, it.quantity)" />
+                  <button type="button" (click)="updateQty(it, it.quantity + 1)">+</button>
+                </div>
+              </div>
+            </td>
+            <td class="kpi-price">{{ it.price * it.quantity }}</td>
+
+            <td>
+              <button class="mini danger" type="button" (click)="remove(it)">Xóa</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <aside class="shop-card summary-card">
+      <div class="summary-row">
+        <div class="label">Tạm tính</div>
+        <div class="value">{{ subtotal }}</div>
+
+      </div>
+
+      <div class="cta">
+        <button class="primary" type="button" (click)="checkout()">Tiến hành checkout</button>
+      </div>
+
+      <div class="note">* Demo: checkout lưu đơn vào localStorage</div>
+    </aside>
+  </div>
+</div>
+
+

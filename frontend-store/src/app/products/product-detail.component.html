@@ -1,0 +1,34 @@
+<div class="page">
+  <button class="link" type="button" (click)="routerBack()">← Quay lại</button>
+
+
+  <div *ngIf="loading" class="loading">Đang tải...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && product" class="box">
+    <h2 class="name">{{ product.name }}</h2>
+
+    <img
+      class="hero"
+      [src]="product.image || '/assets/product-placeholder.png'"
+      [alt]="product.name"
+    />
+
+    <div class="meta">Giá: ${{ product.price }}</div>
+    <div class="meta stock">Còn lại: {{ product.stock }} chiếc</div>
+
+    <div class="qtyRow">
+      <label>
+        Số lượng
+        <input type="number" min="1" [(ngModel)]="quantity" />
+      </label>
+
+      <button class="primary" type="button" (click)="addToCart()" [disabled]="product.stock===0">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="note">* Demo: mô phỏng giỏ hàng + checkout bằng localStorage</div>
+  </div>
+</div>
+

@@ -1,25 +1,2 @@
-<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
-  
-  <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">
-    📦 Cửa Hàng Công Nghệ TechStore
-  </h2>
+<router-outlet></router-outlet>
 
-  <div *ngIf="loading" style="color: #3498db; font-weight: bold; padding: 10px;">
-    ⏳ Đang tải dữ liệu từ Server Express...
-  </div>
-
-  <div *ngIf="!loading && products.length > 0" style="margin-top: 20px;">
-    <div *ngFor="let p of products" 
-         style="background: #f8f9fa; padding: 15px; margin-bottom: 15px; border-left: 5px solid #2ecc71; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-      
-      <h3 style="margin: 0 0 5px 0; color: #333;">{{ p.name }}</h3>
-      <p style="margin: 5px 0; color: #e74c3c; font-weight: bold;">Giá: ${{ p.price }}</p>
-      <span style="font-size: 13px; color: #7f8c8d;">Số lượng trong kho: {{ p.stock }} chiếc</span>
-    </div>
-  </div>
-
-  <div *ngIf="!loading && products.length === 0" style="color: #7f8c8d; text-align: center; padding: 20px;">
-    Hiện tại cửa hàng chưa có sản phẩm nào.
-  </div>
-
-</div>
