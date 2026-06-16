@@ -1,42 +1,17 @@
-<div class="wrap">
-  <div class="card">
-    <h2>🔐 Đăng nhập</h2>
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; text-align: center;">
+  <h2>ĐĂNG NHẬP HỆ THỐNG</h2>
+  
+  <p style="color: red; font-weight: bold;" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <div class="hint">
-      Tài khoản mock:
-      <div>• admin / admin123</div>
-      <div>• user / user123</div>
-      <div class="muted">Hoặc đăng ký user ở /register</div>
-    </div>
-
-
-    <form (ngSubmit)="submit()" #f="ngForm" class="form">
-      <label>
-        Username
-        <input name="username" [(ngModel)]="username" required />
-      </label>
-
-      <label>
-        Password
-        <input
-          name="password"
-          type="password"
-          [(ngModel)]="password"
-          required
-        />
-      </label>
-
-      <button type="submit" [disabled]="loading">
-        {{ loading ? 'Đang đăng nhập...' : 'Đăng nhập' }}
-      </button>
-
-      <div *ngIf="error" class="error">{{ error }}</div>
-    </form>
-
-    <button type="button" class="linkBtn" (click)="goHome()">Về trang chủ</button>
-    <button type="button" class="linkBtn" (click)="router.navigateByUrl('/register')">Đăng ký</button>
-
-
+  <div style="margin-bottom: 15px;">
+    <input type="text" [(ngModel)]="username" placeholder="Tên đăng nhập" style="width: 80%; padding: 8px;">
   </div>
-</div>
+  
+  <div style="margin-bottom: 20px;">
+    <input type="password" [(ngModel)]="password" placeholder="Mật khẩu" style="width: 80%; padding: 8px;">
+  </div>
 
+  <button (click)="onLogin()" style="padding: 8px 20px; background-color: blue; color: white; border: none; cursor: pointer; border-radius: 4px; width: 85%;">
+    Đăng Nhập
+  </button>
+</div>

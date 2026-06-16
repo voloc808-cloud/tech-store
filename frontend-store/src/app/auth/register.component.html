@@ -1,29 +1,17 @@
-<div class="wrap">
-  <div class="card">
-    <h2>📝 Đăng ký tài khoản</h2>
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; text-align: center;">
+  <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
+  
+  <p style="color: red; font-weight: bold;" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <form (ngSubmit)="register()" class="form">
-      <label>
-        Username
-        <input name="username" [(ngModel)]="username" required />
-      </label>
-
-      <label>
-        Password
-        <input name="password" type="password" [(ngModel)]="password" required />
-      </label>
-
-      <label>
-        Nhập lại password
-        <input name="confirm" type="password" [(ngModel)]="confirm" required />
-      </label>
-
-      <button type="submit" class="primary">Đăng ký</button>
-
-      <div *ngIf="error" class="error">{{ error }}</div>
-
-      <button type="button" class="linkBtn" (click)="goLogin()">Đã có tài khoản? Đăng nhập</button>
-    </form>
+  <div style="margin-bottom: 15px;">
+    <input type="text" [(ngModel)]="username" placeholder="Tên đăng nhập" style="width: 80%; padding: 8px;">
   </div>
-</div>
+  
+  <div style="margin-bottom: 15px;">
+    <input type="password" [(ngModel)]="password" placeholder="Mật khẩu (>= 4 ký tự)" style="width: 80%; padding: 8px;">
+  </div>
 
+  <button (click)="onRegister()" style="padding: 8px 20px; background-color: green; color: white; border: none; cursor: pointer; border-radius: 4px;">
+    Tạo tài khoản
+  </button>
+</div>

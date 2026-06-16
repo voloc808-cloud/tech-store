@@ -1,125 +1,152 @@
+require('dotenv').config(); 
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs'); // THÊM DÒNG NÀY
+const jwt = require('jsonwebtoken');   // THÊM DÒNG NÀY
 
-//tao ung dung express
 const app = express();
 
-
-// Cho phép Angular gọi API, neu khong co cors(), browser se chan request khac port
 app.use(cors());
-// Cho phép server Express đọc dữ liệu JSON gửi lên tu request body
 app.use(express.json()); 
 
-// ĐÂY CHÍNH LÀ MOCK DATA 
-//nhung trong thuc te thi dung mysql, sqlserver, mongodb
-let products = [
-    {
-        id: 1,
-        name: 'iPhone 15',
-        price: 1200,
-        stock: 10,
-        image: 'https://picsum.photos/300?1'
-    },
-    {
-        id: 2,
-        name: 'MacBook M3',
-        price: 2000,
-        stock: 5,
-        image: 'https://picsum.photos/300?2'
-    }
-];
+const JWT_SECRET = process.env.JWT_SECRET || 'techstore_secret_key_2026'; // Khóa bí mật JWT
 
-// API Endpoint: Gửi danh sách sản phẩm về cho Angular
-app.get('/products', (req, res) => {
-    res.json(products);
+// -----------------------------
+// KẾT NỐI MONGODB ATLAS
+// -----------------------------
+const mongoURI = process.env.MONGO_URI; 
+
+mongoose.connect(mongoURI)
+    .then(() => console.log('✅ Đã kết nối với MongoDB Atlas thành công!'))
+    .catch(err => console.error('❌ Lỗi kết nối MongoDB Atlas:', err));
+
+// -----------------------------
+// TẠO SCHEMA VÀ MODEL
+// -----------------------------
+const productSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    stock: { type: Number, default: 0 },
+    image: { type: String }
+});
+const Product = mongoose.model('Product', productSchema);
+
+// THÊM SCHEMA USER VÀO ĐÂY
+const userSchema = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ['admin', 'user'], default: 'user' }
+}, { timestamps: true });
+const User = mongoose.model('User', userSchema);
+
+
+// -----------------------------
+// API ĐĂNG KÝ & ĐĂNG NHẬP
+// -----------------------------
+
+// 1. API Đăng ký tài khoản mới
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const u = username.trim();
+
+        if (!u || !password || password.length < 4) {
+            return res.status(400).json({ message: 'Dữ liệu không hợp lệ hoặc mật khẩu quá ngắn!' });
+        }
+
+        const existingUser = await User.findOne({ username: u });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Username này đã tồn tại rồi!' });
+        }
+
+        // Mã hóa mật khẩu trước khi lưu
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Tài khoản đầu tiên đăng ký tự động làm admin (hoặc bạn có thể sửa lại)
+        const isFirstAccount = (await User.countDocuments({})) === 0;
+        const role = isFirstAccount ? 'admin' : 'user';
+
+        const newUser = new User({ username: u, password: hashedPassword, role });
+        await newUser.save();
+
+        res.status(201).json({ message: 'Đăng ký tài khoản thành công!' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 });
 
-//-----------------------------
-//get product by id
-//-----------------------------
+// 2. API Đăng nhập
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({ username: username.trim() });
+        
+        if (!user) {
+            return res.status(400).json({ message: 'Tài khoản hoặc mật khẩu không chính xác!' });
+        }
 
-app.get('/products/:id', (req, res) => {
-    const id = parseInt(req.params.id);
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Tài khoản hoặc mật khẩu không chính xác!' });
+        }
 
-    const product = products.find(p => p.id === id);
+        // Tạo chuỗi Token mã hóa quyền hạn
+        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
 
-    if  (!product){
-        return res.status(404).json({
-            message: 'Product not found'
+        res.json({
+            message: 'Đăng nhập thành công!',
+            token,
+            user: { username: user.username, role: user.role }
         });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    res.json(product);
 });
 
-//-----------------------------
-//create product (POST prooduct)
-//-----------------------------
 
-app.post('/products', (req, res) => {
-    const newProduct = req.body;
-
-    products.push(newProduct);
-
-    res.status(201).json({
-        message: 'Product created successfully',
-        data: newProduct
-    });
+// -----------------------------
+// API ENDPOINTS SẢN PHẨM (GIỮ NGUYÊN)
+// -----------------------------
+app.get('/products', async (req, res) => {
+    try { const products = await Product.find(); res.json(products); } 
+    catch (error) { res.status(500).json({ message: error.message }); }
 });
 
-//-----------------------------
-//update product
-//-----------------------------
-
-app.put('/products/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const index = products.findIndex(p => p.id === id);
-
-    if (index === -1) {
-        return res.status(404).json({
-            message: 'Product not found'
-        });
-    }
-
-    const updateProduct = req.body;
-
-    // Đảm bảo id không bị lệch nếu client không gửi id
-    products[index] = { ...products[index], ...updateProduct, id };
-
-    res.json({
-        message: 'Product updated successfully',
-        data: products[index]
-    });
+app.get('/products/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ message: 'Product not found' });
+        res.json(product);
+    } catch (error) { res.status(500).json({ message: 'Lỗi định dạng ID' }); }
 });
 
-//-----------------------------
-//delete product
-//-----------------------------
-
-app.delete('/products/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-
-    products = products.filter(p => p.id !== id);
-
-    res.json({
-        message: 'Product deleted successfully'
-    });
-
+app.post('/products', async (req, res) => {
+    try {
+        const newProduct = new Product(req.body);
+        await newProduct.save();
+        res.status(201).json({ message: 'Product created successfully', data: newProduct });
+    } catch (error) { res.status(400).json({ message: error.message }); }
 });
 
-//-----------------------------
-//home route
-//-----------------------------
-
-app.get('/', (req, res) => {
-    res.send('Product api is running...');
+app.put('/products/:id', async (req, res) => {
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedProduct) return res.status(404).json({ message: 'Product not found' });
+        res.json({ message: 'Product updated successfully', data: updatedProduct });
+    } catch (error) { res.status(400).json({ message: error.message }); }
 });
 
-//-----------------------------
-//start server in port 3000
-//-----------------------------
-const PORT = 3000;
-//khoi dong server
-app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+app.delete('/products/:id', async (req, res) => {
+    try {
+        const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+        if (!deletedProduct) return res.status(404).json({ message: 'Product not found' });
+        res.json({ message: 'Product deleted successfully' });
+    } catch (error) { res.status(500).json({ message: error.message }); }
 });
+
+app.get('/', (req, res) => { res.send('Product API is running with MongoDB Atlas...'); });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => { console.log(`Server is running at http://localhost:${PORT}`); });
