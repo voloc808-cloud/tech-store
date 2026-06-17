@@ -8,17 +8,23 @@ import { AuthService } from './auth.service';
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './register.component.html'
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.css'
 })
 export class RegisterComponent {
   username = '';
   password = '';
+  confirmPassword='';
   errorMessage = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onRegister() {
     this.errorMessage = '';
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Mật khẩu nhập lại không khớp!';
+      return;
+    }
     this.authService.register(this.username, this.password).subscribe({
       next: (res) => {
         alert(res.message || 'Tạo tài khoản thành công!');

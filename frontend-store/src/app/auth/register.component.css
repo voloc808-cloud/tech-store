@@ -1,12 +1,63 @@
-:host{display:block;}
-.wrap{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-.card{width:420px;background:#fff;border:1px solid #e6e6e6;border-radius:10px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.form-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+}
 
-h2{margin:0 0 10px;color:#2c3e50;}
-.form{display:flex;flex-direction:column;gap:12px;}
-label{font-size:13px;color:#444;display:flex;flex-direction:column;gap:6px;}
-input{padding:10px;border:1px solid #dcdcdc;border-radius:8px;outline:none;}
-.primary{padding:10px 12px;border-radius:8px;border:0;background:#3498db;color:#fff;font-weight:700;cursor:pointer;}
-.error{color:#e74c3c;font-size:13px;font-weight:700;margin-top:-6px;}
-.linkBtn{width:100%;margin-top:4px;background:transparent;border:0;color:#3498db;cursor:pointer;font-weight:700;text-align:left;}
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Quan trọng để input không bị tràn */
+}
 
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-submit {
+  flex: 1;
+  padding: 12px;
+  background-color: #ee4d2d; /* Màu cam Shopee */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-submit:hover {
+  background-color: #d73a1e; /* Màu đậm hơn khi hover */
+}
+
+.btn-back {
+  flex: 1;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.btn-back:hover {
+  background-color: #e0e0e0;
+}
+
+.link-group {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.link-group a {
+  color: #ee4d2d;
+  text-decoration: none;
+  font-weight: bold;
+}
