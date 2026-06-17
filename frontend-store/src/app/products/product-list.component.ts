@@ -20,7 +20,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   error: string | null = null;
   currentKeyword = '';
 
-  // Quản lý luồng dữ liệu nhập vào ô tìm kiếm
   private searchSubject = new Subject<string>();
   private sub?: Subscription;
   private productsChangedHandler?: () => void;
@@ -45,17 +44,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // 1. KHỞI TẠO LUỒNG TÌM KIẾM THÔNG MINH (CHỐNG TREO LOADING)
+    // 1. LUỒNG TÌM KIẾM REALTIME: Bỏ qua hoàn toàn Cache LocalStorage khi đang gõ
     this.searchSubject.pipe(
-      debounceTime(300),        // Đợi 300ms sau khi dừng gõ mới bắt đầu xử lý
-      distinctUntilChanged(),   // Chỉ gọi API nếu từ khóa khác với từ khóa vừa gõ trước đó
+      debounceTime(300),        
+      distinctUntilChanged(),   
       tap((keyword) => {
         this.loading = true;
         this.error = null;
         this.currentKeyword = keyword;
       }),
       switchMap((keyword) => 
-        // switchMap sẽ tự động HỦY request cũ nếu có request mới đè lên
         this.productService.getProducts(keyword).pipe(
           timeout({ each: 10000 }),
           finalize(() => {
@@ -80,10 +78,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Tải dữ liệu mặc định ban đầu
     this.load();
 
-    // Reload dữ liệu mỗi khi điều hướng về /products
     this.sub = this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => {
@@ -99,7 +95,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
-    this.searchSubject.complete(); // Đóng luồng tìm kiếm để tránh rò rỉ bộ nhớ
+    this.searchSubject.complete(); 
     if (this.productsChangedHandler) {
       window.removeEventListener('products:changed', this.productsChangedHandler as any);
     }
@@ -114,22 +110,21 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/products');
   }
 
-  // ==================== SỬA HÀM ONSEARCH: ĐẨY TỪ KHÓA VÀO LUỒNG XỬ LÝ ====================
   onSearch(event: any): void {
     const keyword = event.target.value.trim();
+    this.currentKeyword = keyword; 
     
     if (keyword === '') {
-      this.currentKeyword = '';
-      this.load(); // Nếu xóa hết chữ, tải lại danh sách gốc (dùng cache)
+      this.load(); 
     } else {
-      this.searchSubject.next(keyword); // Đẩy từ khóa vào bộ lọc xử lý thông minh
+      this.searchSubject.next(keyword); 
     }
   }
 
-  // Hàm tải dữ liệu mặc định (dùng cache LocalStorage)
   private load(keyword: string = ''): void {
     if (this.loading) return;
 
+    // CHỈ sử dụng cache khi KHÔNG gõ tìm kiếm sản phẩm
     if (!keyword) {
       const cacheKey = 'techstore.products.cache.v1';
       const cacheRaw = localStorage.getItem(cacheKey);
@@ -176,11 +171,33 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDetail(id: number): void {
+  openDetail(id: any): void {
     this.router.navigateByUrl(`/products/${id}`);
   }
 
   addToCart(product: any) {
     this.cart.addToCart(product, 1);
+  }
+
+  onImageError(event: Event, productName: string = '') {
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      const name = productName.toLowerCase();
+      if (name.includes('iphone') || name.includes('phone')) {
+        img.src = 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500';
+      } else if (name.includes('macbook') || name.includes('air') || name.includes('laptop')) {
+        img.src = 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500';
+      } else {
+        img.src = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500';
+      }
+    }
+  }
+
+  formatPrice(price: any): string {
+    const rawPrice = Number(price) || 0;
+    if (rawPrice < 100000) {
+      return (rawPrice * 25000).toLocaleString('vi-VN') + ' đ';
+    }
+    return rawPrice.toLocaleString('vi-VN') + ' đ';
   }
 }

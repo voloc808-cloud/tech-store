@@ -22,21 +22,40 @@ export class ProductService {
     );
   }
 
-  // 🌟 GIỮ NGUYÊN: Các hàm CRUD phục vụ cho hệ thống Admin/Quản lý của nhóm
+  // 🌟 GIỮ NGUYÊN: Hàm phục vụ cho hệ thống Admin thêm sản phẩm
   addProduct(product: any) {
     return this.http.post(this.apiUrl, product);
   }
 
+  // 🌟 ĐÃ SỬA: Chuyển id sang kiểu string để tương thích hoàn toàn với MongoDB ObjectId
   updateProduct(product: any) {
     // backend: PUT /products/:id
-    return this.http.put(`${this.apiUrl}/${product.id}`, product);
+    const id = product._id || product.id;
+    return this.http.put(`${this.apiUrl}/${id}`, product).pipe(
+      catchError(() => this.http.put(`${this.fallbackApiUrl}/${id}`, product))
+    );
   }
 
-  getProductById(id: number) {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  // 🌟 ĐÃ SỬA: Fix triệt để lỗi treo trang chi tiết sản phẩm
+  getProductById(id: string): Observable<any> {
+    const requestUrl = `${this.apiUrl}/${id}`;
+    const fallbackUrl = `${this.fallbackApiUrl}/${id}`;
+
+    console.log('📡 Service đang gọi API chi tiết với ID:', id);
+
+    // Thử gọi qua proxy trước, nếu proxy sập hoặc nghẽn, tự động đâm thẳng cổng 3000 cứu nguy tức thì
+    return this.http.get<any>(requestUrl).pipe(
+      catchError(() => {
+        console.warn('⚠️ Cổng Proxy /api bị đơ ngầm, tự động kích hoạt đường truyền dự phòng cổng 3000...');
+        return this.http.get<any>(fallbackUrl);
+      })
+    );
   }
 
-  deleteProduct(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  // 🌟 ĐÃ SỬA: Chuyển id sang kiểu string để tránh lỗi khi Admin bấm xóa sản phẩm
+  deleteProduct(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`).pipe(
+      catchError(() => this.http.delete(`${this.fallbackApiUrl}/${id}`))
+    );
   }
 }
