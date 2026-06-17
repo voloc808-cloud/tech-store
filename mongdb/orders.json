@@ -1,0 +1,11 @@
+[{
+  "_id": "1",
+  "userId": "1",
+  "orderDate": "2026-06-17T10:00:00Z",
+  "totalAmount": 30500000,
+  "status": "Chờ xác nhận",
+  "paymentMethod": "COD",
+  "receiverName": "Nguyễn Văn A",
+  "receiverPhone": "0901234567",
+  "shippingAddress": "123 Nguyễn Huệ, TP.HCM"
+}]
