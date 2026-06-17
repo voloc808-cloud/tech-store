@@ -28,7 +28,7 @@ export class Payment implements OnInit {
 
     this.order = this.orderService.getOrder(this.orderCode);
 
-    console.log('ORDER:', this.order); 
+    console.log('ORDER:', this.order); // ⭐ DEBUG
   }
 
   confirmPayment() {
