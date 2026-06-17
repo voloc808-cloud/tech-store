@@ -6,18 +6,21 @@ import { finalize, timeout } from 'rxjs/operators';
 import { ProductService } from '../services/product';
 import { CartService } from '../services/cart.service';
 import { AuthService } from '../auth/auth.service';
+import { FormsModule } from '@angular/forms';
 
 type ProductsChangedEvent = Event;
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
 })
 export class ProductListComponent implements OnInit, OnDestroy {
   products: any[] = [];
+  allProducts: any[] = [];
+  searchTerm: string = '';
   loading = false;
   error: string | null = null;
 
@@ -28,9 +31,23 @@ export class ProductListComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     public router: Router,
     private cart: CartService,
-    public auth: AuthService
+    public auth: AuthService,
   ) {}
 
+  onSearch() {
+    if (!this.searchTerm.trim()) {
+      this.products = [...this.allProducts]; // Nếu để trống thì hiện lại toàn bộ
+    } else {
+      const term = this.searchTerm.toLowerCase();
+      this.products = this.allProducts.filter((p) => p.name.toLowerCase().includes(term));
+    }
+  }
+
+  resetAndGoHome() {
+    this.searchTerm = ''; // Xóa chữ trong ô tìm kiếm
+    this.products = [...this.allProducts]; // Trả lại toàn bộ danh sách
+    this.router.navigateByUrl('/products'); // Điều hướng về trang danh sách
+  }
 
   get isLoggedIn(): boolean {
     return this.auth.isLoggedIn();
@@ -64,10 +81,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
     if (this.productsChangedHandler) {
-      window.removeEventListener(
-        'products:changed',
-        this.productsChangedHandler as any
-      );
+      window.removeEventListener('products:changed', this.productsChangedHandler as any);
     }
   }
 
@@ -81,28 +95,25 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   private load(): void {
-    // tránh reload trùng lặp khi đang fetch
+    // Tránh reload trùng lặp khi đang fetch
     if (this.loading) return;
 
-    // cache dữ liệu để trang load nhanh khi quay lại /products
-    // (cache theo thời điểm: 60s)
+    // Kiểm tra cache (dữ liệu trong 60s)
     const cacheKey = 'techstore.products.cache.v1';
     const cacheRaw = localStorage.getItem(cacheKey);
+
     if (cacheRaw) {
       try {
         const cache = JSON.parse(cacheRaw) as { ts: number; data: any };
-        if (
-          cache?.data &&
-          typeof cache.ts === 'number' &&
-          Date.now() - cache.ts < 60000
-        ) {
-          this.products = Array.isArray(cache.data) ? cache.data : cache.data?.data;
+        if (cache?.data && typeof cache.ts === 'number' && Date.now() - cache.ts < 60000) {
+          this.allProducts = Array.isArray(cache.data) ? cache.data : cache.data?.data;
+          this.products = [...this.allProducts]; // Hiển thị tất cả khi load xong
           this.loading = false;
           this.error = null;
           return;
         }
       } catch {
-        // ignore cache parse lỗi
+        // Bỏ qua lỗi parse cache
       }
     }
 
@@ -115,34 +126,32 @@ export class ProductListComponent implements OnInit, OnDestroy {
         timeout({ each: 10000 }),
         finalize(() => {
           this.loading = false;
-        })
+        }),
       )
       .subscribe({
         next: (data: any) => {
           const list = Array.isArray(data) ? data : data?.data;
-          this.products = Array.isArray(list) ? list : [];
+          // Lưu toàn bộ vào allProducts để phục vụ tìm kiếm
+          this.allProducts = Array.isArray(list) ? list : [];
+          // Gán vào products để hiển thị lên grid
+          this.products = [...this.allProducts];
 
+          // Lưu vào cache
           try {
-            const cacheKey = 'techstore.products.cache.v1';
             localStorage.setItem(
               cacheKey,
-              JSON.stringify({ ts: Date.now(), data: this.products })
+              JSON.stringify({ ts: Date.now(), data: this.allProducts }),
             );
           } catch {
-            // ignore (localStorage có thể bị chặn)
+            // Bỏ qua nếu localStorage bị chặn
           }
 
           if (this.products.length === 0) {
-            this.error =
-              'Không thấy sản phẩm nào. Có thể backend đang không trả dữ liệu đúng format.';
+            this.error = 'Không thấy sản phẩm nào.';
           }
         },
         error: (err: any) => {
-          this.error =
-            err?.message ??
-            (err?.name === 'TimeoutError'
-              ? 'Quá thời gian tải sản phẩm. Vui lòng kiểm tra proxy/backend.'
-              : 'Không tải được sản phẩm');
+          this.error = err?.message ?? 'Không tải được sản phẩm';
         },
       });
   }
@@ -155,4 +164,3 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.cart.addToCart(product, 1);
   }
 }
-
