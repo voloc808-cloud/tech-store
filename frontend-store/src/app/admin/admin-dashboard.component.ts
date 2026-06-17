@@ -191,7 +191,7 @@ export class AdminDashboardComponent implements OnInit {
 
     this.error = null;
 
-    this.productService.deleteProduct(id).subscribe({
+this.productService.deleteProduct(id.toString()).subscribe({
       next: () => {
         // Server mock không trả về products, nên cần reload danh sách
         this.loadProducts();

@@ -34,24 +34,35 @@ export class ProductListComponent implements OnInit, OnDestroy {
     public auth: AuthService,
   ) {}
 
-<<<<<<< HEAD
-=======
-  onSearch() {
+  // Xử lý tìm kiếm thủ công khi người dùng nhấn Enter hoặc nút Tìm kiếm
+  onSearchInput(): void {
     if (!this.searchTerm.trim()) {
-      this.products = [...this.allProducts]; // Nếu để trống thì hiện lại toàn bộ
+      this.products = [...this.allProducts];
     } else {
       const term = this.searchTerm.toLowerCase();
       this.products = this.allProducts.filter((p) => p.name.toLowerCase().includes(term));
     }
   }
 
-  resetAndGoHome() {
-    this.searchTerm = ''; // Xóa chữ trong ô tìm kiếm
-    this.products = [...this.allProducts]; // Trả lại toàn bộ danh sách
-    this.router.navigateByUrl('/products'); // Điều hướng về trang danh sách
+  // Nhận diện sự kiện gõ chữ trực tiếp từ ô tìm kiếm để chạy luồng Realtime qua RxJS Subject
+  onSearch(event: any): void {
+    const keyword = event.target.value.trim();
+    this.currentKeyword = keyword; 
+    
+    if (keyword === '') {
+      this.load(); 
+    } else {
+      this.searchSubject.next(keyword); 
+    }
   }
 
->>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
+  resetAndGoHome() {
+    this.searchTerm = ''; 
+    this.currentKeyword = '';
+    this.products = [...this.allProducts]; 
+    this.router.navigateByUrl('/products'); 
+  }
+
   get isLoggedIn(): boolean {
     return this.auth.isLoggedIn();
   }
@@ -65,7 +76,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // 1. LUỒNG TÌM KIẾM REALTIME: Bỏ qua hoàn toàn Cache LocalStorage khi đang gõ
+    // 1. LUỒNG TÌM KIẾM REALTIME: Tối ưu chống spam request và tự hủy request cũ nếu có request mới đè lên
     this.searchSubject.pipe(
       debounceTime(300),        
       distinctUntilChanged(),   
@@ -99,17 +110,21 @@ export class ProductListComponent implements OnInit, OnDestroy {
       }
     });
 
+    // 2. Kích hoạt lấy danh sách sản phẩm mặc định ban đầu
     this.load();
 
+    // Lắng nghe sự kiện chuyển hướng để tự làm mới trang danh sách
     this.sub = this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => {
         if (e.urlAfterRedirects === '/products') {
           this.currentKeyword = '';
+          this.searchTerm = '';
           this.load();
         }
       });
 
+    // Tạo kênh đồng bộ sự kiện khi kho hàng hoặc dữ liệu admin thay đổi
     this.productsChangedHandler = () => this.load(this.currentKeyword);
     window.addEventListener('products:changed', this.productsChangedHandler as any);
   }
@@ -131,64 +146,33 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/products');
   }
 
-<<<<<<< HEAD
-  onSearch(event: any): void {
-    const keyword = event.target.value.trim();
-    this.currentKeyword = keyword; 
-    
-    if (keyword === '') {
-      this.load(); 
-    } else {
-      this.searchSubject.next(keyword); 
-    }
-  }
-
+  // Tải dữ liệu sản phẩm có tích hợp bộ nhớ đệm Cache 60 giây khi xem danh sách mặc định
   private load(keyword: string = ''): void {
     if (this.loading) return;
 
-    // CHỈ sử dụng cache khi KHÔNG gõ tìm kiếm sản phẩm
+    const cacheKey = 'techstore.products.cache.v1';
+
+    // CHỈ sử dụng cache khi KHÔNG gõ tìm kiếm sản phẩm để tránh sai lệch kết quả lọc
     if (!keyword) {
-      const cacheKey = 'techstore.products.cache.v1';
       const cacheRaw = localStorage.getItem(cacheKey);
       if (cacheRaw) {
         try {
           const cache = JSON.parse(cacheRaw) as { ts: number; data: any };
           if (cache?.data && typeof cache.ts === 'number' && Date.now() - cache.ts < 60000) {
-            this.products = Array.isArray(cache.data) ? cache.data : cache.data?.data;
+            const list = Array.isArray(cache.data) ? cache.data : cache.data?.data;
+            this.allProducts = Array.isArray(list) ? list : [];
+            this.products = [...this.allProducts];
             this.loading = false;
             this.error = null;
             return;
           }
         } catch {}
-=======
-  private load(): void {
-    // Tránh reload trùng lặp khi đang fetch
-    if (this.loading) return;
-
-    // Kiểm tra cache (dữ liệu trong 60s)
-    const cacheKey = 'techstore.products.cache.v1';
-    const cacheRaw = localStorage.getItem(cacheKey);
-
-    if (cacheRaw) {
-      try {
-        const cache = JSON.parse(cacheRaw) as { ts: number; data: any };
-        if (cache?.data && typeof cache.ts === 'number' && Date.now() - cache.ts < 60000) {
-          this.allProducts = Array.isArray(cache.data) ? cache.data : cache.data?.data;
-          this.products = [...this.allProducts]; // Hiển thị tất cả khi load xong
-          this.loading = false;
-          this.error = null;
-          return;
-        }
-      } catch {
-        // Bỏ qua lỗi parse cache
->>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
       }
     }
 
     this.loading = true;
     this.error = null;
 
-<<<<<<< HEAD
     this.productService.getProducts(keyword).pipe(
       timeout({ each: 10000 }),
       finalize(() => {
@@ -197,12 +181,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (data: any) => {
         const list = Array.isArray(data) ? data : data?.data;
-        this.products = Array.isArray(list) ? list : [];
+        this.allProducts = Array.isArray(list) ? list : [];
+        this.products = [...this.allProducts];
 
+        // Lưu vào cache cục bộ nếu đây là lệnh tải trang danh sách tổng mặc định
         if (!keyword) {
           try {
-            const cacheKey = 'techstore.products.cache.v1';
-            localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data: this.products }));
+            localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data: this.allProducts }));
           } catch {}
         }
 
@@ -211,45 +196,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
         }
       },
       error: (err: any) => {
-        this.error = 'Không tải được sản phẩm';
+        this.error = err?.message ?? 'Không tải được sản phẩm';
       },
     });
-=======
-    this.productService
-      .getProducts()
-      .pipe(
-        timeout({ each: 10000 }),
-        finalize(() => {
-          this.loading = false;
-        }),
-      )
-      .subscribe({
-        next: (data: any) => {
-          const list = Array.isArray(data) ? data : data?.data;
-          // Lưu toàn bộ vào allProducts để phục vụ tìm kiếm
-          this.allProducts = Array.isArray(list) ? list : [];
-          // Gán vào products để hiển thị lên grid
-          this.products = [...this.allProducts];
-
-          // Lưu vào cache
-          try {
-            localStorage.setItem(
-              cacheKey,
-              JSON.stringify({ ts: Date.now(), data: this.allProducts }),
-            );
-          } catch {
-            // Bỏ qua nếu localStorage bị chặn
-          }
-
-          if (this.products.length === 0) {
-            this.error = 'Không thấy sản phẩm nào.';
-          }
-        },
-        error: (err: any) => {
-          this.error = err?.message ?? 'Không tải được sản phẩm';
-        },
-      });
->>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
   }
 
   openDetail(id: any): void {
@@ -259,8 +208,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   addToCart(product: any) {
     this.cart.addToCart(product, 1);
   }
-<<<<<<< HEAD
 
+  // Phương thức dự phòng khi link ảnh gốc trên MongoDB bị lỗi hoặc sập host
   onImageError(event: Event, productName: string = '') {
     const img = event.target as HTMLImageElement;
     if (img) {
@@ -275,6 +224,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Hàm chuyển đổi tiền tệ Đô la sang Việt Nam Đồng trực quan
   formatPrice(price: any): string {
     const rawPrice = Number(price) || 0;
     if (rawPrice < 100000) {
@@ -283,6 +233,3 @@ export class ProductListComponent implements OnInit, OnDestroy {
     return rawPrice.toLocaleString('vi-VN') + ' đ';
   }
 }
-=======
-}
->>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
