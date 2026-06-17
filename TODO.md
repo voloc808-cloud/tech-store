@@ -1,6 +1,5 @@
-- [ ] (1) Update CartService to store guest cart in sessionStorage and logged-in cart per username in localStorage
-- [ ] (2) Update ProductListComponent TS to expose login state, username, cart count, and navigation to cart
-- [ ] (3) Update ProductListComponent HTML to add right-side buttons: Cart / Login+Register OR username
-- [ ] (4) Update ProductListComponent CSS for header/button/badge
-- [ ] (5) Manual test: guest add cart -> refresh -> cart gone; login add cart -> refresh -> cart persists; cart button navigates to /cart
+- [ ] Hiểu repo và xác định trang giỏ hàng/cart component và route trang sản phẩm (/products).
+- [ ] Cập nhật UI trên `cart.component.html` thêm nút “Quay lại” luôn hiển thị ở header, điều hướng về `/products`.
+- [ ] (Tuỳ chọn) Tối ưu code-behind nếu cần.
+- [ ] Chạy build/serve frontend để kiểm tra nút hoạt động.
 
