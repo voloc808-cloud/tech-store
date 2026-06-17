@@ -19,7 +19,9 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
 
   { path: 'products', component: ProductListComponent },
-  { path: 'products/:id', component: ProductDetailComponent },
+  
+  // 🌟 ĐÃ SỬA: Thêm /detail/ vào path để khớp 100% với URL thực tế 'products/detail/6a328b0e...' ngoài trình duyệt
+  { path: 'products/detail/:id', component: ProductDetailComponent },
 
   { path: 'cart', component: CartComponent },
   { path: 'checkout', component: CheckoutComponent },
@@ -37,4 +39,8 @@ export const routes: Routes = [
   },
 
   { path: '**', redirectTo: '/products' },
+<<<<<<< HEAD
 ];
+=======
+];
+>>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab

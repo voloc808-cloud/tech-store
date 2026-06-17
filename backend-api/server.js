@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs'); // THÊM DÒNG NÀY
-const jwt = require('jsonwebtoken');   // THÊM DÒNG NÀY
+const bcrypt = require('bcryptjs'); 
+const jwt = require('jsonwebtoken');   
 
 const app = express();
 
@@ -32,7 +32,6 @@ const productSchema = new mongoose.Schema({
 });
 const Product = mongoose.model('Product', productSchema);
 
-// THÊM SCHEMA USER VÀO ĐÂY
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -60,11 +59,9 @@ app.post('/api/auth/register', async (req, res) => {
             return res.status(400).json({ message: 'Username này đã tồn tại rồi!' });
         }
 
-        // Mã hóa mật khẩu trước khi lưu
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Tài khoản đầu tiên đăng ký tự động làm admin (hoặc bạn có thể sửa lại)
         const isFirstAccount = (await User.countDocuments({})) === 0;
         const role = isFirstAccount ? 'admin' : 'user';
 
@@ -77,7 +74,7 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
-// 2. API Đăng nhập
+// 2. API Đăng nhập hoàn chỉnh
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -92,7 +89,6 @@ app.post('/api/auth/login', async (req, res) => {
             return res.status(400).json({ message: 'Tài khoản hoặc mật khẩu không chính xác!' });
         }
 
-        // Tạo chuỗi Token mã hóa quyền hạn
         const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
 
         res.json({
@@ -107,11 +103,27 @@ app.post('/api/auth/login', async (req, res) => {
 
 
 // -----------------------------
-// API ENDPOINTS SẢN PHẨM (GIỮ NGUYÊN)
+// API ENDPOINTS SẢN PHẨM (ĐÃ ĐỒNG BỘ THAM SỐ TÌM KIẾM TỪ ANGULAR)
 // -----------------------------
+
 app.get('/products', async (req, res) => {
-    try { const products = await Product.find(); res.json(products); } 
-    catch (error) { res.status(500).json({ message: error.message }); }
+    try {
+        // 🌟 ĐÃ SỬA CHUẨN: Nhận đúng tham số ?search= từ Frontend Angular gửi sang
+        const keyword = req.query.search;
+        let query = {};
+
+        // Nếu có từ khóa tìm kiếm gửi từ Angular lên
+        if (keyword) {
+            // Tìm sản phẩm có tên chứa từ khóa, không phân biệt hoa thường ('i')
+            query.name = { $regex: keyword.trim(), $options: 'i' };
+        }
+
+        const products = await Product.find(query); 
+        res.json(products);
+    } 
+    catch (error) { 
+        res.status(500).json({ message: error.message }); 
+    }
 });
 
 app.get('/products/:id', async (req, res) => {
@@ -119,7 +131,7 @@ app.get('/products/:id', async (req, res) => {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ message: 'Product not found' });
         res.json(product);
-    } catch (error) { res.status(500).json({ message: 'Lỗi định dạng ID' }); }
+    } catch (error) { res.status(500).json({ message: 'Lỗi định dạng ID hoặc sản phẩm không tồn tại' }); }
 });
 
 app.post('/products', async (req, res) => {
@@ -143,7 +155,9 @@ app.delete('/products/:id', async (req, res) => {
         const deletedProduct = await Product.findByIdAndDelete(req.params.id);
         if (!deletedProduct) return res.status(404).json({ message: 'Product not found' });
         res.json({ message: 'Product deleted successfully' });
-    } catch (error) { res.status(500).json({ message: error.message }); }
+    } catch (error) { 
+        res.status(500).json({ message: error.message }); 
+    }
 });
 
 app.get('/', (req, res) => { res.send('Product API is running with MongoDB Atlas...'); });

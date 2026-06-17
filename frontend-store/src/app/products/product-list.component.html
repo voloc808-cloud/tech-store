@@ -1,4 +1,28 @@
 <div class="page">
+<<<<<<< HEAD
+
+  <header class="header">
+    <div class="header-container">
+      
+      <div class="header-left" (click)="router.navigateByUrl('/products')" style="cursor: pointer;">
+        <h2>💻 TechStore</h2>
+      </div>
+
+      <div class="header-search">
+        <input 
+          type="text" 
+          placeholder="Tìm kiếm sản phẩm công nghệ..." 
+          (input)="onSearch($event)"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <div class="header-right">
+        <button class="cartBtn" type="button" (click)="goCart()">
+          <span class="icon">🛒</span> Giỏ hàng
+          <span *ngIf="cartCount > 0" class="cartBadge">{{ cartCount }}</span>
+        </button>
+=======
   <div class="header">
     <div class="header-left" (click)="resetAndGoHome()" style="cursor: pointer;" title="Về trang chủ">
   <h2>🛍️ Shopee Style Store</h2>
@@ -63,11 +87,71 @@
         <div class="price">${{ p.price }}</div>
 
         <button class="btn" (click)="openDetail(p.id)">🛒 Xem chi tiết</button>
+>>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
 
-        <button class="btn" (click)="addToCart(p)" [disabled]="p.stock === 0">
-          ➕ Thêm vào giỏ
-        </button>
+        <ng-container *ngIf="!isLoggedIn">
+          <button class="linkBtn login-btn" type="button" (click)="router.navigateByUrl('/login')">Đăng nhập</button>
+          <button class="linkBtn register-btn" type="button" (click)="router.navigateByUrl('/register')">Đăng ký</button>
+        </ng-container>
+
+        <ng-container *ngIf="isLoggedIn">
+          <div class="userName" (click)="router.navigateByUrl('/orders')" style="cursor: pointer;">
+            👤 {{ username }}
+          </div>
+          <button class="linkBtn logout-btn" type="button" (click)="logout()">Đăng xuất</button>
+        </ng-container>
       </div>
     </div>
+<<<<<<< HEAD
+  </header>
+
+  <main class="main-content">
+    
+    <div class="content-header">
+      <h2 class="section-title">Sản phẩm nổi bật hôm nay</h2>
+      <p class="section-subtitle">Khám phá công nghệ đỉnh cao với mức giá tốt nhất</p>
+    </div>
+
+    <div *ngIf="loading" class="loading-box">
+      <div class="spinner"></div>
+      <p>Đang tải danh sách sản phẩm...</p>
+    </div>
+
+    <div *ngIf="error" class="error-box">
+      ⚠️ {{ error }}
+    </div>
+
+    <div class="grid" *ngIf="!loading && products.length">
+      <div class="product-card" *ngFor="let p of products">
+
+        <div class="img-box" (click)="openDetail(p._id || p.id)">
+          <img [src]="p.image || '/assets/product-placeholder.png'" [alt]="p.name" />
+          
+          <div class="badge" [class.out]="p.stock === 0">
+            {{ p.stock === 0 ? 'Hết hàng' : 'Còn ' + p.stock }}
+          </div>
+        </div>
+
+        <div class="info">
+          <h3 class="name" (click)="openDetail(p._id || p.id)">{{ p.name }}</h3>
+          <div class="price">${{ p.price }}</div>
+
+          <div class="card-actions">
+            <button class="btn btn-secondary" (click)="openDetail(p._id || p.id)">
+              Xem chi tiết
+            </button>
+            <button class="btn btn-primary" (click)="addToCart(p)" [disabled]="p.stock === 0">
+              {{ p.stock === 0 ? 'Hết hàng' : '➕ Vào giỏ' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+=======
   </div>
 </div>
+>>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
