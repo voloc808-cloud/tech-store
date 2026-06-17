@@ -15,7 +15,7 @@ export class OrdersComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
-  constructor(private orderService: OrderService, public router: Router) {}
+  constructor(private orderService: OrderService, public router: Router) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -56,7 +56,7 @@ export class OrdersComponent implements OnInit {
   }
 
   cancelOrder(orderId: number) {
-    this.orderService.cancelOrder(orderId);
+    this.orderService.cancelOrder(orderId.toString());
     this.orders = this.orderService.listOrders();
   }
 }
