@@ -1,17 +1,26 @@
-<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; text-align: center;">
-  <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
+<div class="form-container">
+  <h2>Đăng ký tài khoản</h2>
   
   <p style="color: red; font-weight: bold;" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-  <div style="margin-bottom: 15px;">
-    <input type="text" [(ngModel)]="username" placeholder="Tên đăng nhập" style="width: 80%; padding: 8px;">
+  <div class="input-group">
+    <input type="text" [(ngModel)]="username" placeholder="Tên đăng nhập">
   </div>
   
-  <div style="margin-bottom: 15px;">
-    <input type="password" [(ngModel)]="password" placeholder="Mật khẩu (>= 4 ký tự)" style="width: 80%; padding: 8px;">
+  <div class="input-group">
+    <input type="password" [(ngModel)]="password" placeholder="Mật khẩu">
   </div>
 
-  <button (click)="onRegister()" style="padding: 8px 20px; background-color: green; color: white; border: none; cursor: pointer; border-radius: 4px;">
-    Tạo tài khoản
-  </button>
+  <div class="input-group">
+    <input type="password" [(ngModel)]="confirmPassword" placeholder="Nhập lại mật khẩu">
+  </div>
+
+  <div class="btn-group">
+    <button routerLink="/" class="btn-back">Quay lại Trang Chủ</button>
+    <button (click)="onRegister()" class="btn-submit">Đăng ký</button>
+  </div>
+
+  <div class="link-group">
+    Đã có tài khoản? <a routerLink="/login">Đăng nhập</a>
+  </div>
 </div>

@@ -1,4 +1,5 @@
 <div class="page">
+<<<<<<< HEAD
 
   <header class="header">
     <div class="header-container">
@@ -21,6 +22,72 @@
           <span class="icon">🛒</span> Giỏ hàng
           <span *ngIf="cartCount > 0" class="cartBadge">{{ cartCount }}</span>
         </button>
+=======
+  <div class="header">
+    <div class="header-left" (click)="resetAndGoHome()" style="cursor: pointer;" title="Về trang chủ">
+  <h2>🛍️ Shopee Style Store</h2>
+  <div class="sub">Sản phẩm nổi bật hôm nay</div>
+</div>
+
+    <div class="header-center">
+      <div class="search-bar">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+          placeholder="Tìm kiếm sản phẩm, thương hiệu..."
+        />
+        <button class="search-btn" type="button" (click)="onSearch()">🔍 Tìm kiếm</button>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="cartBtn" type="button" (click)="goCart()">
+        🛒 Giỏ hàng
+        <span *ngIf="cartCount > 0" class="cartBadge">{{ cartCount }}</span>
+      </button>
+
+      <ng-container *ngIf="!isLoggedIn">
+        <button class="linkBtn" type="button" (click)="router.navigateByUrl('/login')">
+          Đăng nhập
+        </button>
+        <button class="linkBtn" type="button" (click)="router.navigateByUrl('/register')">
+          Đăng ký
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="isLoggedIn">
+        <button class="userName" type="button" (click)="router.navigateByUrl('/orders')">
+          👤 {{ username }}
+        </button>
+        <button class="linkBtn" type="button" (click)="logout()">Logout</button>
+      </ng-container>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Đang tải sản phẩm...</div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div class="grid" *ngIf="!loading && products.length">
+    <div class="product-card" *ngFor="let p of products">
+      <div class="img-box">
+        <img [src]="p.image || '/assets/product-placeholder.png'" />
+
+        <div class="badge" [class.out]="p.stock === 0">
+          {{ p.stock === 0 ? 'Hết hàng' : 'Còn ' + p.stock }}
+        </div>
+      </div>
+
+      <div class="info">
+        <div class="name">{{ p.name }}</div>
+
+        <div class="price">${{ p.price }}</div>
+
+        <button class="btn" (click)="openDetail(p.id)">🛒 Xem chi tiết</button>
+>>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
 
         <ng-container *ngIf="!isLoggedIn">
           <button class="linkBtn login-btn" type="button" (click)="router.navigateByUrl('/login')">Đăng nhập</button>
@@ -34,8 +101,8 @@
           <button class="linkBtn logout-btn" type="button" (click)="logout()">Đăng xuất</button>
         </ng-container>
       </div>
-
     </div>
+<<<<<<< HEAD
   </header>
 
   <main class="main-content">
@@ -84,3 +151,7 @@
 
   </main>
 </div>
+=======
+  </div>
+</div>
+>>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab

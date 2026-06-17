@@ -1,0 +1,10 @@
+[{
+  "_id": "...",
+  "fullName": "Admin",
+  "email": "admin@gmail.com",
+  "password": "123456",
+  "phone": "0901234567",
+  "address": "Hà Nội",
+  "role": "admin",
+  "createdAt": "2026-06-17T10:00:00Z"
+}]

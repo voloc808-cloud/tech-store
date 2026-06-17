@@ -1,0 +1,72 @@
+<div class="payment-box" *ngIf="order">
+
+    <h2>Thanh toán đơn hàng</h2>
+
+    <p><b>Mã đơn:</b> {{ order.orderCode }}</p>
+    <p><b>Khách hàng:</b> {{ order.fullName }}</p>
+    <p><b>Tổng tiền:</b> {{ order.total || 0 }} đ</p>
+
+    <hr>
+
+    <h3>Chọn phương thức thanh toán</h3>
+
+    <label>
+        <input type="radio" name="pay" value="COD" [(ngModel)]="paymentMethod">
+        COD (Thanh toán khi nhận hàng)
+    </label>
+
+    <br>
+
+    <label>
+        <input type="radio" name="pay" value="BANK" [(ngModel)]="paymentMethod">
+        Chuyển khoản ngân hàng (VietQR)
+    </label>
+
+    <hr>
+
+    <!-- ===================== -->
+    <!-- ⭐ BANK SECTION -->
+    <!-- ===================== -->
+    <div *ngIf="paymentMethod === 'BANK'" class="bank-box">
+
+        <h3>Thông tin chuyển khoản</h3>
+
+        <p><b>Ngân hàng:</b> Vietcombank</p>
+        <p><b>Số tài khoản:</b> 123456789</p>
+        <p><b>Chủ tài khoản:</b> TECH STORE</p>
+        <p><b>Nội dung:</b> {{ order.orderCode }}</p>
+
+        <!-- QR -->
+        <div class="qr-box">
+            <img [src]="getQrUrl()" alt="VietQR">
+        </div>
+
+        <p class="note">
+            Quét QR để chuyển khoản đúng số tiền.
+        </p>
+
+        <p class="note">
+            Sau khi chuyển khoản, vui lòng nhấn nút "Tôi đã thanh toán" để xác nhận.
+            <button class="confirm-btn" (click)="confirmBankPaid()">
+                Tôi đã thanh toán
+            </button>
+
+    </div>
+
+    <!-- ===================== -->
+    <!-- ⭐ COD BUTTON -->
+    <!-- ===================== -->
+    <div *ngIf="paymentMethod === 'COD'" class="cod-box">
+
+        <p>Bạn sẽ thanh toán khi nhận hàng.</p>
+
+        <button class="confirm-btn" (click)="confirmPayment()">
+            Xác nhận đặt hàng
+        </button>
+
+    </div>
+
+</div>
+
+<!-- loading -->
+<p *ngIf="!order">Đang tải đơn hàng...</p>

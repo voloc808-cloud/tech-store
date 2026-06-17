@@ -6,16 +6,19 @@ import { finalize, timeout, debounceTime, distinctUntilChanged, switchMap, tap }
 import { ProductService } from '../services/product';
 import { CartService } from '../services/cart.service';
 import { AuthService } from '../auth/auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
 })
 export class ProductListComponent implements OnInit, OnDestroy {
   products: any[] = [];
+  allProducts: any[] = [];
+  searchTerm: string = '';
   loading = false;
   error: string | null = null;
   currentKeyword = '';
@@ -28,9 +31,27 @@ export class ProductListComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     public router: Router,
     private cart: CartService,
-    public auth: AuthService
+    public auth: AuthService,
   ) {}
 
+<<<<<<< HEAD
+=======
+  onSearch() {
+    if (!this.searchTerm.trim()) {
+      this.products = [...this.allProducts]; // Nếu để trống thì hiện lại toàn bộ
+    } else {
+      const term = this.searchTerm.toLowerCase();
+      this.products = this.allProducts.filter((p) => p.name.toLowerCase().includes(term));
+    }
+  }
+
+  resetAndGoHome() {
+    this.searchTerm = ''; // Xóa chữ trong ô tìm kiếm
+    this.products = [...this.allProducts]; // Trả lại toàn bộ danh sách
+    this.router.navigateByUrl('/products'); // Điều hướng về trang danh sách
+  }
+
+>>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
   get isLoggedIn(): boolean {
     return this.auth.isLoggedIn();
   }
@@ -110,6 +131,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/products');
   }
 
+<<<<<<< HEAD
   onSearch(event: any): void {
     const keyword = event.target.value.trim();
     this.currentKeyword = keyword; 
@@ -138,12 +160,35 @@ export class ProductListComponent implements OnInit, OnDestroy {
             return;
           }
         } catch {}
+=======
+  private load(): void {
+    // Tránh reload trùng lặp khi đang fetch
+    if (this.loading) return;
+
+    // Kiểm tra cache (dữ liệu trong 60s)
+    const cacheKey = 'techstore.products.cache.v1';
+    const cacheRaw = localStorage.getItem(cacheKey);
+
+    if (cacheRaw) {
+      try {
+        const cache = JSON.parse(cacheRaw) as { ts: number; data: any };
+        if (cache?.data && typeof cache.ts === 'number' && Date.now() - cache.ts < 60000) {
+          this.allProducts = Array.isArray(cache.data) ? cache.data : cache.data?.data;
+          this.products = [...this.allProducts]; // Hiển thị tất cả khi load xong
+          this.loading = false;
+          this.error = null;
+          return;
+        }
+      } catch {
+        // Bỏ qua lỗi parse cache
+>>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
       }
     }
 
     this.loading = true;
     this.error = null;
 
+<<<<<<< HEAD
     this.productService.getProducts(keyword).pipe(
       timeout({ each: 10000 }),
       finalize(() => {
@@ -169,6 +214,42 @@ export class ProductListComponent implements OnInit, OnDestroy {
         this.error = 'Không tải được sản phẩm';
       },
     });
+=======
+    this.productService
+      .getProducts()
+      .pipe(
+        timeout({ each: 10000 }),
+        finalize(() => {
+          this.loading = false;
+        }),
+      )
+      .subscribe({
+        next: (data: any) => {
+          const list = Array.isArray(data) ? data : data?.data;
+          // Lưu toàn bộ vào allProducts để phục vụ tìm kiếm
+          this.allProducts = Array.isArray(list) ? list : [];
+          // Gán vào products để hiển thị lên grid
+          this.products = [...this.allProducts];
+
+          // Lưu vào cache
+          try {
+            localStorage.setItem(
+              cacheKey,
+              JSON.stringify({ ts: Date.now(), data: this.allProducts }),
+            );
+          } catch {
+            // Bỏ qua nếu localStorage bị chặn
+          }
+
+          if (this.products.length === 0) {
+            this.error = 'Không thấy sản phẩm nào.';
+          }
+        },
+        error: (err: any) => {
+          this.error = err?.message ?? 'Không tải được sản phẩm';
+        },
+      });
+>>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
   }
 
   openDetail(id: any): void {
@@ -178,6 +259,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   addToCart(product: any) {
     this.cart.addToCart(product, 1);
   }
+<<<<<<< HEAD
 
   onImageError(event: Event, productName: string = '') {
     const img = event.target as HTMLImageElement;
@@ -201,3 +283,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
     return rawPrice.toLocaleString('vi-VN') + ' đ';
   }
 }
+=======
+}
+>>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab

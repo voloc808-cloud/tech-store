@@ -1,17 +1,22 @@
-<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; text-align: center;">
-  <h2>ĐĂNG NHẬP HỆ THỐNG</h2>
+<div class="form-container">
+  <h2>Đăng nhập</h2>
   
   <p style="color: red; font-weight: bold;" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-  <div style="margin-bottom: 15px;">
-    <input type="text" [(ngModel)]="username" placeholder="Tên đăng nhập" style="width: 80%; padding: 8px;">
+  <div class="input-group">
+    <input type="text" [(ngModel)]="username" placeholder="Tên đăng nhập">
   </div>
   
-  <div style="margin-bottom: 20px;">
-    <input type="password" [(ngModel)]="password" placeholder="Mật khẩu" style="width: 80%; padding: 8px;">
+  <div class="input-group">
+    <input type="password" [(ngModel)]="password" placeholder="Mật khẩu">
   </div>
 
-  <button (click)="onLogin()" style="padding: 8px 20px; background-color: blue; color: white; border: none; cursor: pointer; border-radius: 4px; width: 85%;">
-    Đăng Nhập
-  </button>
+  <div class="btn-group">
+    <button routerLink="/" class="btn-back">Quay lại Trang Chủ</button>
+    <button (click)="onLogin()" class="btn-submit">Đăng Nhập</button>
+  </div>
+
+  <div class="link-group">
+    Chưa có tài khoản? <a routerLink="/register">Đăng ký ngay</a>
+  </div>
 </div>
