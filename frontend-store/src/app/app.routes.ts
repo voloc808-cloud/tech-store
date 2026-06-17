@@ -8,7 +8,7 @@ import { ProductDetailComponent } from './products/product-detail.component';
 import { CartComponent } from './cart/cart.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 
-//  THÊM 2 COMPONENT MỚI( ý) 
+// THÊM 2 COMPONENT MỚI CHO LUỒNG THANH TOÁN
 import { Payment } from './pages/payment/payment';
 import { OrderSuccess } from './pages/order-success/order-success';
 
@@ -20,16 +20,16 @@ export const routes: Routes = [
 
   { path: 'products', component: ProductListComponent },
   
-  // 🌟 ĐÃ SỬA: Thêm /detail/ vào path để khớp 100% với URL thực tế 'products/detail/6a328b0e...' ngoài trình duyệt
+  // 🌟 ĐÃ SỬA: Giữ nguyên cấu trúc thêm /detail/ vào path để khớp 100% với URL thực tế ngoài trình duyệt
   { path: 'products/detail/:id', component: ProductDetailComponent },
 
   { path: 'cart', component: CartComponent },
   { path: 'checkout', component: CheckoutComponent },
 
-  //  PAYMENT FLOW (BẮT BUỘC THÊM) ( ý) 
+  // LUỒNG THANH TOÁN (PAYMENT FLOW)
   { path: 'payment/:orderCode', component: Payment },
 
-  // (OPTIONAL) trang hoàn tất
+  // Trang báo hoàn tất đơn hàng thành công
   { path: 'order-success/:orderCode', component: OrderSuccess },
 
   {
@@ -38,9 +38,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
 
+  // Đường dẫn dự phòng quay về danh sách nếu gõ sai URL
   { path: '**', redirectTo: '/products' },
-<<<<<<< HEAD
 ];
-=======
-];
->>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab

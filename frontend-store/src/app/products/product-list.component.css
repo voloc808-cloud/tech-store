@@ -1,22 +1,10 @@
-<<<<<<< HEAD
-/* ==================== ỐP `:HOST` ĐỂ KHỐNG CHẾ TOÀN BỘ COMPONENT ANGULAR ==================== */
 :host {
   display: block;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* ==================== RESET & BIẾN MÀU SẮC ==================== */
-:root {
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --dark: #0f172a;
-  --gray-text: #64748b;
-  --bg-site: #f8fafc;
-  --border: #e2e8f0;
-}
-
-/* 🌟 ĐÃ SỬA: Biến trang thành khối Flexbox dọc, cưỡng ép mọi thẻ con căn giữa */
+/* Biến trang thành khối chống tràn ngang vĩnh viễn */
 .page {
   background-color: #f8fafc;
   min-height: 100vh;
@@ -27,18 +15,20 @@
   flex-direction: column;
   align-items: center; 
   box-sizing: border-box;
+  overflow-x: hidden; /* Bộ khóa an toàn */
 }
 
-/* ==================== NAVBAR (HEADER) TRẢI DÀI TOÀN MÀN HÌNH ==================== */
+/* ==================== NAVBAR (HEADER) ==================== */
 .header {
-  background-color: #0f172a; /* Màu tối sang trọng công nghệ */
+  background-color: #0f172a; 
   color: white;
   padding: 14px 0;
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 100%; /* Giữ thanh đen luôn căng tràn 100% chiều ngang */
+  width: 100%; 
+  box-sizing: border-box;
 }
 
 .header-container {
@@ -48,6 +38,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .header-left h2 {
@@ -57,19 +48,18 @@
   letter-spacing: -0.5px;
 }
 
-/* ==================== CSS ĐỊNH DẠNG Ô TÌM KIẾM THÔNG MINH ==================== */
 .header-search {
   position: relative;
-  flex: 0 1 400px; /* Giới hạn chiều rộng tối đa 400px, co giãn thông minh */
+  flex: 0 1 400px; 
   margin: 0 20px;
 }
 
 .header-search input {
   width: 100%;
   padding: 8px 36px 8px 16px;
-  border-radius: 20px; /* Bo tròn kiểu viên thuốc */
+  border-radius: 20px; 
   border: 1px solid #334155;
-  background-color: #1e293b; /* Nền tối nhẹ tiệp màu thanh header */
+  background-color: #1e293b; 
   color: white;
   font-size: 14px;
   transition: all 0.2s ease;
@@ -77,13 +67,9 @@
 
 .header-search input:focus {
   outline: none;
-  border-color: #2563eb; /* Sáng xanh dương khi click vào gõ chữ */
+  border-color: #2563eb; 
   background-color: #0f172a;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-}
-
-.header-search input::placeholder {
-  color: #64748b;
 }
 
 .search-icon {
@@ -101,7 +87,6 @@
   gap: 16px;
 }
 
-/* ==================== KHU VỰC TÀI KHOẢN & NÚT BẤM NAVBAR ==================== */
 .userName {
   font-weight: 600;
   font-size: 14px;
@@ -139,7 +124,6 @@
   font-weight: 700;
 }
 
-/* Cấu hình chung cho các nút dạng text/link điều hướng */
 .linkBtn {
   background: transparent;
   border: none;
@@ -151,7 +135,6 @@
   transition: all 0.2s ease;
 }
 
-/* Biến nút Đăng nhập thành dạng nút bấm viền nổi bật, rõ ràng */
 .login-btn {
   border: 1px solid #334155;
   color: #f8fafc;
@@ -164,7 +147,6 @@
   color: white;
 }
 
-/* Nút Đăng ký có nền xanh dương chủ đạo cực kỳ hút mắt */
 .register-btn {
   background-color: #2563eb;
   color: white;
@@ -175,7 +157,6 @@
   box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
 }
 
-/* Nút Đăng xuất ẩn viền mặc định, đổi màu cảnh báo khi hover */
 .logout-btn {
   color: #94a3b8;
   border: 1px solid transparent;
@@ -187,8 +168,7 @@
   border-color: rgba(239, 68, 68, 0.2);
 }
 
-/* ==================== NỘI DUNG CHÍNH TRANG SẢN PHẨM ==================== */
-/* 🌟 ĐÃ SỬA: Cưỡng ép khối nội dung tự căn giữa chính nó và đẩy chữ vào giữa */
+/* ==================== CONTENT AREA ==================== */
 .main-content {
   max-width: 1200px;
   width: 100%;
@@ -197,13 +177,12 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Ép chữ "Đang tải danh sách..." canh đều ở giữa */
+  align-items: center; 
 }
 
-/* Căn giữa dòng tiêu đề chữ */
 .content-header {
   width: 100%;
-  text-align: center; /* Đổi sang center để tiêu đề đẹp cân xứng */
+  text-align: center; 
   margin-bottom: 32px;
 }
 
@@ -220,17 +199,17 @@
   font-size: 14px;
 }
 
-/* ==================== CSS GRID: TỰ ĐỘNG DÀN HÀNG VÀ CĂN GIỮA LƯỚI ==================== */
+/* ==================== CSS GRID CAO CẤP ==================== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 24px;
   width: 100%;
-  justify-content: center; /* Căn lưới vào giữa màn hình */
-  justify-items: center;   /* Căn giữa từng ruột card bên trong ô lưới */
+  justify-content: center; 
+  justify-items: center;   
+  box-sizing: border-box;
 }
 
-/* ==================== CARD SẢN PHẨM CAO CẤP ==================== */
 .product-card {
   background: white;
   border-radius: 14px;
@@ -239,8 +218,8 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  width: 100%; /* Giúp card co giãn khớp khung lưới */
-  max-width: 300px; /* Khống chế card không bị bè ra quá to */
+  width: 100%; 
+  max-width: 280px; 
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
 }
 
@@ -249,7 +228,6 @@
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
 }
 
-/* ĐỊNH DẠNG KHUNG ẢNH CHỐNG MÉO */
 .img-box {
   width: 100%;
   height: 220px;
@@ -260,6 +238,7 @@
   padding: 20px;
   cursor: pointer;
   position: relative;
+  box-sizing: border-box;
 }
 
 .img-box img {
@@ -273,7 +252,6 @@
   transform: scale(1.04);
 }
 
-/* BADGE TRẠNG THÁI SỐ LƯỢNG */
 .badge {
   position: absolute;
   top: 12px;
@@ -290,12 +268,12 @@
   background-color: #64748b;
 }
 
-/* THÔNG TIN SẢN PHẨM */
 .info {
   padding: 18px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  box-sizing: border-box;
 }
 
 .name {
@@ -320,7 +298,6 @@
   margin-bottom: 16px;
 }
 
-/* CỤM NÚT BẤM DƯỚI CARD */
 .card-actions {
   display: flex;
   gap: 8px;
@@ -359,7 +336,6 @@
   background-color: #e2e8f0;
 }
 
-/* LOADING & ERROR BOX */
 .loading-box, .error-box {
   text-align: center;
   padding: 40px;
@@ -371,269 +347,3 @@
   background-color: #fef2f2;
   color: #ef4444;
 }
-=======
-/* --- PHẦN BỔ SUNG CHO TÌM KIẾM --- */
-
-.header-center {
-  flex: 1; /* Cho phép chiếm không gian trống ở giữa */
-  display: flex;
-  justify-content: center; /* Căn giữa thanh tìm kiếm */
-  align-items: center;
-  padding: 0 15px;
-}
-
-.search-bar {
-  display: flex;
-  width: 100%;
-  max-width: 500px;
-  border: 2px solid #ee4d2d; /* Viền màu thương hiệu */
-  border-radius: 10px; /* Bo góc cùng tông với cartBtn */
-  overflow: hidden;
-  background-color: #fff;
-}
-
-.search-bar input {
-  flex: 1;
-  padding: 10px 15px;
-  border: none;
-  outline: none;
-  font-size: 14px;
-}
-
-.search-btn {
-  background-color: #ee4d2d;
-  color: white;
-  border: none;
-  padding: 0 20px;
-  cursor: pointer;
-  font-weight: 800;
-  transition: 0.2s;
-}
-
-.search-btn:hover {
-  background-color: #d63f22;
-}
-
-/* Điều chỉnh lại header để các phần tử xếp hàng ngang hoàn hảo */
-.header {
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center; /* Căn giữa theo chiều dọc */
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap; /* Cho phép xuống dòng nếu màn hình quá hẹp */
-}
-
-/* Responsive cho điện thoại: đẩy thanh tìm kiếm xuống dưới */
-@media (max-width: 800px) {
-  .header {
-    flex-direction: column;
-  }
-  .header-center {
-    order: 3; /* Đẩy xuống dưới cùng */
-    width: 100%;
-    margin-top: 10px;
-  }
-}
-
-.header-left {
-  transition: opacity 0.2s ease;
-}
-
-.header-left:hover {
-  opacity: 0.7; /* Làm mờ nhẹ khi di chuột vào Logo */
-}
-
-.page {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  font-family: Arial;
-}
-
-/* HEADER */
-.header {
-  margin-bottom: 20px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-.header-left h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 900;
-  color: #ee4d2d;
-}
-.sub {
-  color: #666;
-  font-size: 13px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.cartBtn {
-  position: relative;
-  border: none;
-  background: #ee4d2d;
-  color: #fff;
-  font-weight: 800;
-  padding: 10px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.cartBtn:hover {
-  background: #d63f22;
-}
-
-.cartBadge {
-  position: absolute;
-  top: -8px;
-  right: -10px;
-  background: #111;
-  color: #fff;
-  font-weight: 900;
-  border-radius: 999px;
-  padding: 2px 8px;
-  font-size: 12px;
-  border: 2px solid #fff;
-}
-
-.linkBtn {
-  border: 1px solid #eee;
-  background: #fff;
-  color: #333;
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 800;
-  transition: 0.2s;
-}
-.linkBtn:hover {
-  border-color: #ee4d2d;
-  color: #ee4d2d;
-}
-
-.userName {
-  font-weight: 900;
-  color: #333;
-  padding: 6px 10px;
-  border-radius: 10px;
-  background: #fafafa;
-  border: 1px solid #eee;
-  cursor: pointer;
-}
-
-.userName:hover {
-  border-color: #ee4d2d;
-  color: #ee4d2d;
-}
-
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
-}
-
-@media (max-width: 1100px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-@media (max-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* CARD */
-.product-card {
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  transition: 0.2s;
-  cursor: pointer;
-}
-
-.product-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-}
-
-/* IMAGE */
-.img-box {
-  position: relative;
-}
-
-.img-box img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-
-/* BADGE */
-.badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #ee4d2d;
-  color: #fff;
-  padding: 5px 8px;
-  font-size: 11px;
-  border-radius: 6px;
-  font-weight: 700;
-}
-
-.badge.out {
-  background: #999;
-}
-
-/* INFO */
-.info {
-  padding: 10px;
-}
-
-.name {
-  font-size: 14px;
-  font-weight: 600;
-  height: 40px;
-  overflow: hidden;
-}
-
-.price {
-  color: #ee4d2d;
-  font-weight: 900;
-  margin: 8px 0;
-}
-
-/* BUTTON */
-.btn {
-  width: 100%;
-  padding: 8px;
-  border: none;
-  background: #ee4d2d;
-  color: #fff;
-  font-weight: 700;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn:hover {
-  background: #d63f22;
-}
->>>>>>> 2b5dfcb93015d1b56c67f96d9042c06aa676b5ab
