@@ -51,15 +51,18 @@ export class CartService {
     return this.readCart();
   }
 
-  addToCart(product: { id: number; name: string; price: number }, quantity: number = 1) {
+  addToCart(product: any, quantity: number = 1) {
     const cart = this.readCart();
 
-    const idx = cart.items.findIndex((i) => i.productId === product.id);
+    const productId = product.id ?? product._id;
+
+    const idx = cart.items.findIndex((i) => i.productId === productId);
+
     if (idx >= 0) {
       cart.items[idx].quantity += quantity;
     } else {
       const item: CartItem = {
-        productId: product.id,
+        productId,
         name: product.name,
         price: product.price,
         quantity,
@@ -69,7 +72,6 @@ export class CartService {
 
     this.writeCart(cart);
   }
-
   updateQuantity(productId: number, quantity: number) {
     const cart = this.readCart();
     const idx = cart.items.findIndex((i) => i.productId === productId);
