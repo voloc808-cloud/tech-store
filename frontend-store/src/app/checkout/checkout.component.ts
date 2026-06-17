@@ -24,26 +24,11 @@ export class CheckoutComponent implements OnInit {
   placing = false;
   message: string | null = null;
 
-  private formatVnd(amount: number): string {
-    const n = Number(amount) || 0;
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      maximumFractionDigits: 0,
-    }).format(n);
-  }
-
-  private validatePhone(phoneRaw: string): boolean {
-    const p = phoneRaw.trim();
-    // Chấp nhận: 0xxxxxxxxx hoặc +84xxxxxxxxx (9-10 số VN)
-    return /^(0\d{9,10}|\+?84\d{9,10})$/.test(p.replace(/\s+/g, ''));
-  }
-
   constructor(
     private cart: CartService,
     private order: OrderService,
     public router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const c = this.cart.getCart();
@@ -53,6 +38,19 @@ export class CheckoutComponent implements OnInit {
     if (this.items.length === 0) {
       this.router.navigateByUrl('/cart');
     }
+  }
+
+  private validatePhone(phoneRaw: string): boolean {
+    const p = phoneRaw.trim();
+    return /^(0\d{9,10}|\+?84\d{9,10})$/.test(p.replace(/\s+/g, ''));
+  }
+
+  private formatVnd(amount: number): string {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      maximumFractionDigits: 0,
+    }).format(Number(amount) || 0);
   }
 
   placeOrder() {
@@ -69,8 +67,9 @@ export class CheckoutComponent implements OnInit {
     }
 
     this.placing = true;
+
     try {
-      const order = this.order.placeOrder({
+      const createdOrder = this.order.placeOrder({
         items: this.items.map((i) => ({
           productId: i.productId,
           quantity: i.quantity,
@@ -83,8 +82,8 @@ export class CheckoutComponent implements OnInit {
         note: this.note.trim() || undefined,
       });
 
-      this.cart.clear();
-      this.message = `Đặt hàng thành công! Mã đơn: ${order.id}`;
+      this.router.navigate(['/payment', createdOrder.orderCode]);
+
     } finally {
       this.placing = false;
     }
@@ -94,5 +93,3 @@ export class CheckoutComponent implements OnInit {
     return this.formatVnd(amount);
   }
 }
-
-
