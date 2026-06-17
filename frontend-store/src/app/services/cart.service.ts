@@ -9,12 +9,15 @@ export class CartService {
   private readonly GUEST_KEY = 'techstore.cart.guest';
   private readonly CART_PREFIX = 'techstore.cart.'; // techstore.cart.<username>
 
-  constructor(private auth: AuthService) {}
+  //ai là ng đăng nhập
+  constructor(private auth: AuthService) { }
 
+  //tạo giỏ hàng rỗng
   private emptyCart(): Cart {
     return { items: [] };
   }
 
+  // kiểm tra đăng nhập
   private getStorageKind(): 'guest' | 'user' {
     return this.auth.isLoggedIn() ? 'user' : 'guest';
   }
