@@ -44,5 +44,20 @@ export class OrderService {
   listOrders(): any[] {
     return this.readOrders();
   }
+
+  cancelOrder(orderId: number): void {
+    const orders = this.readOrders();
+    const idx = orders.findIndex((o) => Number(o.id) === Number(orderId));
+    if (idx < 0) return;
+
+    // demo: nếu chưa huỷ, set status = cancelled
+    orders[idx] = {
+      ...orders[idx],
+      status: orders[idx]?.status === 'cancelled' ? 'cancelled' : 'cancelled',
+      cancelledAt: new Date().toISOString(),
+    };
+    this.writeOrders(orders);
+  }
 }
+
 

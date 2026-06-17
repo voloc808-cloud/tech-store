@@ -29,6 +29,10 @@
     </div>
 
     <div class="note">* Demo: mô phỏng giỏ hàng + checkout bằng localStorage</div>
+
+    <!-- SPECS + REVIEWS (Shopee style) -->
+    <app-product-specs [specs]="product.specs || []"></app-product-specs>
+    <app-product-reviews [reviews]="product.reviews || []"></app-product-reviews>
   </div>
 </div>
 
