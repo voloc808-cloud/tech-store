@@ -1,0 +1,33 @@
+<div class="success-box" *ngIf="order">
+
+    <div class="icon">✅</div>
+
+    <h2>Đặt hàng thành công!</h2>
+
+    <p><b>Mã đơn:</b> {{ order.orderCode }}</p>
+    <p><b>Khách hàng:</b> {{ order.fullName }}</p>
+    <p><b>SĐT:</b> {{ order.phone }}</p>
+    <p><b>Địa chỉ:</b> {{ order.address }}</p>
+
+    <hr>
+
+    <h3>Sản phẩm</h3>
+
+    <div *ngFor="let i of order.items">
+        • {{ i.name }} x {{ i.quantity }}
+    </div>
+
+    <hr>
+
+    <p><b>Phương thức:</b> {{ order.paymentMethod || 'Chưa thanh toán' }}</p>
+
+    <h2>Tổng tiền: {{ order.total || 0 }} đ</h2>
+
+    <div class="actions">
+        <button (click)="goHome()">Tiếp tục mua hàng</button>
+        <button (click)="goOrders()">Về giỏ / đơn hàng</button>
+    </div>
+
+</div>
+
+<p *ngIf="!order">Không tìm thấy đơn hàng</p>
