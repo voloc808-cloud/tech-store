@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ProductService } from './product';
 
 export interface CheckoutPayload {
   items: {
@@ -19,6 +20,7 @@ export interface CheckoutPayload {
 export class OrderService {
   private readonly STORAGE_KEY = 'techstore.orders';
 
+  constructor(private productService: ProductService) { }
   // ======================
   // READ / WRITE LOCALSTORAGE
   // ======================
@@ -94,6 +96,8 @@ export class OrderService {
 
     if (paymentMethod === 'COD') {
       orders[index].status = 'PAID';
+
+      this.productService.updateStock(orders[index].items);
     }
 
     if (paymentMethod === 'BANK') {
@@ -114,6 +118,9 @@ export class OrderService {
     orders[index].status = 'PAID';
     orders[index].paymentMethod = 'BANK';
 
+    // GIẢM TỒN KHO
+    this.productService.updateStock(orders[index].items);
+
     this.writeOrders(orders);
     return orders[index];
   }
@@ -124,4 +131,19 @@ export class OrderService {
   listOrders(): any[] {
     return this.readOrders();
   }
+  // ======================
+  // CANCEL ORDER (ADMIN)
+  // ======================
+  cancelOrder(orderCode: string) {
+    const orders = this.readOrders();
+    const index = orders.findIndex(o => o.orderCode === orderCode);
+
+    if (index === -1) return null;
+
+    orders[index].status = 'CANCELLED';
+
+    this.writeOrders(orders);
+    return orders[index];
+  }
+
 }
