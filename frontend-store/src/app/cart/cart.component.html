@@ -29,7 +29,7 @@
       <div class="cart-rows">
         <div *ngFor="let it of items" class="cart-item-row">
           <div class="cart-item-img">
-            <img [src]="'/assets/product-placeholder.png'" alt="{{ it.name }}" />
+            <img [src]="'assets/products/' + it.imageUrl" />
             <div class="cart-item-badge ok">Shopee</div>
           </div>
 
@@ -37,14 +37,16 @@
             <div class="cart-item-name" title="{{ it.name }}">{{ it.name }}</div>
             <div class="cart-item-price">
               <span class="kpi-price">{{ it.price }}</span>
-              <span class="muted">/ sản phẩm</span>
+              <span class="muted"></span>
             </div>
           </div>
 
           <div class="cart-item-qty">
             <div class="qty-stepper">
-              <button type="button" aria-label="Giảm số lượng" (click)="updateQty(it, it.quantity - 1)" [disabled]="it.quantity <= 0">-</button>
-              <input type="number" min="0" inputmode="numeric" [(ngModel)]="it.quantity" (change)="updateQty(it, it.quantity)" />
+              <button type="button" aria-label="Giảm số lượng" (click)="updateQty(it, it.quantity - 1)"
+                [disabled]="it.quantity <= 0">-</button>
+              <input type="number" min="0" inputmode="numeric" [(ngModel)]="it.quantity"
+                (change)="updateQty(it, it.quantity)" />
               <button type="button" aria-label="Tăng số lượng" (click)="updateQty(it, it.quantity + 1)">+</button>
             </div>
           </div>
@@ -80,12 +82,10 @@
       </div>
 
       <div class="cta">
-        <button class="primary" type="button" (click)="checkout()" [disabled]="items.length === 0">Tiến hành checkout</button>
+        <button class="primary" type="button" (click)="checkout()" [disabled]="items.length === 0">Tiến hành
+          checkout</button>
       </div>
 
-      <div class="note">* Demo: checkout lưu đơn vào localStorage</div>
     </aside>
   </div>
 </div>
-
-
