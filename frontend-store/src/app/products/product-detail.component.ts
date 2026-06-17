@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +29,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private productService: ProductService,
     private cart: CartService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   routerBack() {
@@ -37,7 +38,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // 🌟 ĐỒNG BỘ: Luồng theo dõi ID từ thanh URL realtime bằng paramMap
+    // Luồng theo dõi ID từ thanh URL realtime bằng paramMap
     this.routeSubscription = this.route.paramMap.subscribe(params => {
       this.currentId = params.get('id');
       console.log('🔄 Trang chi tiết bắt được mã ID từ URL:', this.currentId);
@@ -50,7 +51,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Sự kiện đồng bộ khi Admin cập nhật dữ liệu từ hệ thống bên ngoài
+    // Sự kiện đồng bộ khi dữ liệu hệ thống thay đổi từ bên ngoài
     this.productsChangedHandler = () => {
       if (this.currentId != null) this.load();
     };
@@ -66,13 +67,12 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Hàm định dạng tiền tệ và gộp dữ liệu Shopee-style lên HTML giao diện
+  // Định dạng tiền tệ và chuẩn hóa mock-data kiểu dáng Shopee
   private processProductData(p: any): void {
     const rawPrice = Number(p?.price) || 0;
     this.product = {
       ...p,
-      // Đổi tiền sang VNĐ dấu chấm hàng nghìn chuẩn giao diện
-      formattedPrice: rawPrice < 100000 ? (rawPrice * 25000).toLocaleString('vi-VN') : rawPrice.toLocaleString('vi-VN'),
+      formattedPrice: rawPrice < 100000 ? (rawPrice * 25000).toLocaleString('vi-VN') + ' đ' : rawPrice.toLocaleString('vi-VN') + ' đ',
       description: p?.description ?? 'Sản phẩm công nghệ chính hãng cao cấp, phân phối độc quyền tại TechStore. Hỗ trợ trả góp 0%, bảo hành 12 tháng lỗi 1 đổi 1 trên toàn quốc.',
       specs: p?.specs ?? [
         { key: 'Thương hiệu', value: p?.brand ?? 'TechStore Elite' },
@@ -85,10 +85,11 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       ],
     };
     this.error = null;
-    this.loading = false; // 🔓 Tắt Loading để mở bung giao diện HTML
+    this.loading = false;
+    this.cdr.detectChanges();
   }
 
-  // 🌟 ĐÃ SỬA: Chốt chặn bọc an toàn tránh lỗi crash "Cannot read properties of undefined (reading 'price')"
+  // 🌟 ĐÃ CẬP NHẬT: Xử lý bóc tách vạn năng dữ liệu thô từ API Backend
   private load(): void {
     if (this.currentId == null) return;
 
@@ -97,58 +98,65 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     this.product = null;
 
     console.log('📡 Đang gửi HttpClient request lấy chi tiết cho ID:', this.currentId);
-    
+
     this.productService.getProductById(this.currentId).subscribe({
       next: (p) => {
-        // 🛡️ CHỐT CHẶN 1: Nếu Backend trả về mảng [ ], tự động bốc phần tử [0] ra để xử lý cấu trúc
-        const realProduct = Array.isArray(p) ? p[0] : p;
+        console.log('📦 Cục dữ liệu thô nhận được từ Backend API:', p);
 
-        // 🛡️ CHỐT CHẶN 2: Khử lỗi nếu object trống rỗng hoàn toàn hoặc thiếu trường dữ liệu cốt lõi
+        let realProduct = p;
+        if (p && typeof p === 'object') {
+          if (p.data) realProduct = p.data;
+          else if (p.product) realProduct = p.product;
+          else if (Array.isArray(p)) realProduct = p[0];
+        }
+
         if (!realProduct || (!realProduct.price && !realProduct.name)) {
           console.warn('⚠️ Dữ liệu trống hoặc sai cấu trúc, kích hoạt mảng tổng cứu nguy...');
           this.loadFromBackup();
           return;
         }
-        
+
         console.log('✅ Đã nhận thành công cục dữ liệu sản phẩm chuẩn:', realProduct);
         this.processProductData(realProduct);
       },
       error: (err) => {
-        console.error('❌ API lỗi kết nối hoặc nghẽn mạch, kích hoạt mảng tổng cứu nguy...');
+        console.error('❌ API lỗi kết nối, kích hoạt mảng tổng cứu nguy...', err);
         this.loadFromBackup();
       }
     });
   }
 
-  // Luồng bốc mảng dữ liệu dự phòng từ LocalStorage để cứu nguy giao diện nếu API lỗi
+  // 🌟 ĐÃ CẬP NHẬT: Tự động bóc tách dữ liệu mảng tổng cứu nguy khi Backend dùng object bọc
   private loadFromBackup(): void {
     this.productService.getProducts().subscribe({
-      next: (backupList: any[]) => {
-        const list = Array.isArray(backupList) ? backupList : (backupList as any)?.data;
-        
-        // So khớp tìm kiếm sản phẩm tương thích ID dưới mảng
-        const found = Array.isArray(list) 
+      next: (backupList: any) => {
+        let list = backupList;
+        if (backupList && typeof backupList === 'object') {
+          list = backupList.data || backupList.products || (Array.isArray(backupList) ? backupList : []);
+        }
+
+        const found = Array.isArray(list)
           ? list.find(item => item._id === this.currentId || item.id?.toString() === this.currentId)
           : null;
-          
+
         if (found) {
           console.log('🎯 Đã cứu nguy giao diện thành công bằng mảng tổng:', found);
           this.processProductData(found);
         } else {
-          // 🛡️ Nếu sai lệch ID hoàn toàn và không thấy gì dưới cache, ÉP tắt LOADING và hiện lỗi trực quan
           this.error = `Sản phẩm với mã ID [${this.currentId}] không tồn tại trên hệ thống. Vui lòng kiểm tra lại!`;
           this.product = null;
           this.loading = false;
+          this.cdr.detectChanges();
         }
       },
       error: () => {
         this.error = 'Không thể nạp dữ liệu hệ thống. Vui lòng kiểm tra lại Backend!';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
-  // Hàm tự động nạp ảnh công nghệ sắc nét từ Unsplash khi link ảnh trong DB bị lỗi hoặc vỡ
   onImageError(event: any, productName: string = ''): void {
     const name = productName.toLowerCase();
     if (name.includes('iphone') || name.includes('phone')) {

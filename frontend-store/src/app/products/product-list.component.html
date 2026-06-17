@@ -67,7 +67,7 @@
 
         <div class="info">
           <h3 class="name" (click)="openDetail(p._id || p.id)">{{ p.name }}</h3>
-          <div class="price">${{ p.price }}</div>
+          <div class="price">{{ formatPrice(p.price) }}</div>
 
           <div class="card-actions">
             <button class="btn btn-secondary" (click)="openDetail(p._id || p.id)">

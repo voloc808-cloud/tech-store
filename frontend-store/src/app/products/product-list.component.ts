@@ -34,6 +34,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
     public auth: AuthService,
   ) {}
 
+  // 🌟 ĐÃ SỬA: Thêm /detail/ vào URL để khớp hoàn hảo 100% với app.routes.ts
+  openDetail(id: any): void {
+    if (!id) {
+      console.error('❌ Không tìm thấy mã sản phẩm hợp lệ');
+      return;
+    }
+    console.log('🚀 Đang chuyển hướng luồng xem chi tiết tới ID:', id);
+    this.router.navigateByUrl(`/products/detail/${id}`);
+  }
+
   // Xử lý tìm kiếm thủ công khi người dùng nhấn Enter hoặc nút Tìm kiếm
   onSearchInput(): void {
     if (!this.searchTerm.trim()) {
@@ -201,10 +211,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDetail(id: any): void {
-    this.router.navigateByUrl(`/products/${id}`);
-  }
-
   addToCart(product: any) {
     this.cart.addToCart(product, 1);
   }
@@ -232,4 +238,5 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
     return rawPrice.toLocaleString('vi-VN') + ' đ';
   }
+
 }
