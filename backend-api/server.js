@@ -103,19 +103,19 @@ app.post('/api/auth/login', async (req, res) => {
 
 
 // -----------------------------
-// API ENDPOINTS SẢN PHẨM (ĐÃ TÍCH HỢP TÌM KIẾM MONGODB)
+// API ENDPOINTS SẢN PHẨM (ĐÃ ĐỒNG BỘ THAM SỐ TÌM KIẾM TỪ ANGULAR)
 // -----------------------------
 
-// Sửa lại hàm này để tìm kiếm trực tiếp trên dữ liệu thật MongoDB Atlas
 app.get('/products', async (req, res) => {
     try {
-        const keyword = req.query.q;
+        // 🌟 ĐÃ SỬA CHUẨN: Nhận đúng tham số ?search= từ Frontend Angular gửi sang
+        const keyword = req.query.search;
         let query = {};
 
         // Nếu có từ khóa tìm kiếm gửi từ Angular lên
         if (keyword) {
             // Tìm sản phẩm có tên chứa từ khóa, không phân biệt hoa thường ('i')
-            query.name = { $regex: keyword, $options: 'i' };
+            query.name = { $regex: keyword.trim(), $options: 'i' };
         }
 
         const products = await Product.find(query); 
@@ -131,7 +131,7 @@ app.get('/products/:id', async (req, res) => {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ message: 'Product not found' });
         res.json(product);
-    } catch (error) { res.status(500).json({ message: 'Lỗi định dạng ID' }); }
+    } catch (error) { res.status(500).json({ message: 'Lỗi định dạng ID hoặc sản phẩm không tồn tại' }); }
 });
 
 app.post('/products', async (req, res) => {

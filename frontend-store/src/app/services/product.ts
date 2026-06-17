@@ -6,25 +6,23 @@ import { Observable, catchError } from 'rxjs';
   providedIn: 'root',
 })
 export class ProductService {
-  // Use proxy path first; if proxy/dev-server isn't applying, fall back to backend URL.
+  // Sử dụng proxy path trước; nếu proxy không áp dụng được, tự động chuyển về Backend URL trực tiếp.
   private apiUrl = '/api/products';
   private fallbackApiUrl = 'http://localhost:3000/products';
 
   constructor(private http: HttpClient) {}
 
-getProducts(keyword: string = ''): Observable<any> {
-    // Nếu có từ khóa, gọi THẲNG vào localhost:3000 để né lỗi cấu hình Proxy của dev-server
-    if (keyword) {
-      return this.http.get<any>(`${this.fallbackApiUrl}?q=${keyword}`).pipe(
-        catchError(() => this.http.get<any>(`${this.apiUrl}?q=${keyword}`))
-      );
-    }
+  getProducts(keyword: string = ''): Observable<any> {
+    const encodedKeyword = encodeURIComponent(keyword.trim());
+    const requestUrl = keyword ? `${this.apiUrl}?search=${encodedKeyword}` : this.apiUrl;
+    const fallbackUrl = keyword ? `${this.fallbackApiUrl}?search=${encodedKeyword}` : this.fallbackApiUrl;
 
-    return this.http.get<any>(this.apiUrl).pipe(
-      catchError(() => this.http.get<any>(this.fallbackApiUrl))
+    return this.http.get<any>(requestUrl).pipe(
+      catchError(() => this.http.get<any>(fallbackUrl))
     );
   }
 
+  // 🌟 GIỮ NGUYÊN: Các hàm CRUD phục vụ cho hệ thống Admin/Quản lý của nhóm
   addProduct(product: any) {
     return this.http.post(this.apiUrl, product);
   }
