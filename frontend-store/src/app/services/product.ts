@@ -12,7 +12,14 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  getProducts(): Observable<any> {
+getProducts(keyword: string = ''): Observable<any> {
+    // Nếu có từ khóa, gọi THẲNG vào localhost:3000 để né lỗi cấu hình Proxy của dev-server
+    if (keyword) {
+      return this.http.get<any>(`${this.fallbackApiUrl}?q=${keyword}`).pipe(
+        catchError(() => this.http.get<any>(`${this.apiUrl}?q=${keyword}`))
+      );
+    }
+
     return this.http.get<any>(this.apiUrl).pipe(
       catchError(() => this.http.get<any>(this.fallbackApiUrl))
     );
