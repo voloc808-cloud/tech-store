@@ -1,0 +1,32 @@
+[{
+  "_id": {
+    "$oid": "6a3210c3cca25d9c2acda263"
+  },
+  "categoryName": "Điện thoại",
+  "description": "Smartphone",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "6a3210c3cca25d9c2acda264"
+  },
+  "categoryName": "Laptop",
+  "description": "Máy tính xách tay",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "6a3210c3cca25d9c2acda265"
+  },
+  "categoryName": "Phụ kiện",
+  "description": "Phụ kiện công nghệ",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "6a3210c3cca25d9c2acda266"
+  },
+  "categoryName": "Máy tính bảng",
+  "description": "Tablet",
+  "isActive": true
+}]
