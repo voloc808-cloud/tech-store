@@ -21,6 +21,13 @@ export class CartComponent implements OnInit {
     this.refresh();
   }
 
+  formatPrice(price: any): string {
+    const rawPrice = Number(price) || 0;
+    if (rawPrice < 100000) {
+      return (rawPrice * 25000).toLocaleString('vi-VN') + ' đ';
+    }
+    return rawPrice.toLocaleString('vi-VN') + ' đ';
+  }
 
   refresh() {
     const c = this.cart.getCart();

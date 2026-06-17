@@ -36,7 +36,7 @@
           <div class="cart-item-info">
             <div class="cart-item-name" title="{{ it.name }}">{{ it.name }}</div>
             <div class="cart-item-price">
-              <span class="kpi-price">{{ it.price }}</span>
+              <span class="kpi-price">{{ formatPrice(it.price) }}</span>
               <span class="muted"></span>
             </div>
           </div>
@@ -52,7 +52,7 @@
           </div>
 
           <div class="cart-item-total">
-            <div class="kpi-price total-money">{{ it.price * it.quantity }}</div>
+            <div class="kpi-price total-money">{{ formatPrice(it.price * it.quantity) }}</div>
             <div class="muted">Thành tiền</div>
           </div>
 
@@ -68,7 +68,7 @@
 
       <div class="summary-row">
         <div class="label">Tạm tính</div>
-        <div class="value">{{ subtotal }}</div>
+        <div class="value">{{ formatPrice(subtotal) }}</div>
       </div>
 
       <div class="summary-row">
@@ -78,7 +78,7 @@
 
       <div class="summary-row total-row">
         <div class="label">Tổng cộng</div>
-        <div class="value">{{ subtotal }}</div>
+        <div class="value">{{ formatPrice(subtotal) }}</div>
       </div>
 
       <div class="cta">
