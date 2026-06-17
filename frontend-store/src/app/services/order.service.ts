@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 
 export interface CheckoutPayload {
-  items: { productId: number; quantity: number; name: string; price: number }[];
+  items: {
+    productId: number;
+    quantity: number;
+    name: string;
+    price: number;
+  }[];
   fullName: string;
   phone: string;
   address: string;
@@ -12,9 +17,11 @@ export interface CheckoutPayload {
   providedIn: 'root',
 })
 export class OrderService {
-  // Mock: lưu đơn vào localStorage để demo
   private readonly STORAGE_KEY = 'techstore.orders';
 
+  // ======================
+  // READ / WRITE LOCALSTORAGE
+  // ======================
   private readOrders(): any[] {
     const raw = localStorage.getItem(this.STORAGE_KEY);
     if (!raw) return [];
@@ -29,35 +36,92 @@ export class OrderService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(orders));
   }
 
+  // ======================
+  // CREATE ORDER
+  // ======================
   placeOrder(payload: CheckoutPayload) {
     const orders = this.readOrders();
+
+    const orderCode = Date.now().toString();
+
+    const total = payload.items.reduce(
+      (sum, i) => sum + i.price * i.quantity,
+      0
+    );
+
     const order = {
-      id: Date.now(),
+      orderCode,
+      items: payload.items,
+      fullName: payload.fullName,
+      phone: payload.phone,
+      address: payload.address,
+      note: payload.note || '',
+      total,
+
+      // UPGRADE STATUS FLOW
+      status: 'PENDING', // PENDING → WAITING → PAID
+
+      paymentMethod: null,
+
       createdAt: new Date().toISOString(),
-      ...payload,
     };
+
     orders.unshift(order);
     this.writeOrders(orders);
+
     return order;
   }
 
+  // ======================
+  // GET ORDER
+  // ======================
+  getOrder(orderCode: string) {
+    return this.readOrders().find(o => o.orderCode === orderCode);
+  }
+
+  // ======================
+  // PAYMENT (COD / BANK HANDLING)
+  // ======================
+
+  //  COD = PAID luôn
+  payOrder(orderCode: string, paymentMethod: string) {
+    const orders = this.readOrders();
+    const index = orders.findIndex(o => o.orderCode === orderCode);
+
+    if (index === -1) return null;
+
+    orders[index].paymentMethod = paymentMethod;
+
+    if (paymentMethod === 'COD') {
+      orders[index].status = 'PAID';
+    }
+
+    if (paymentMethod === 'BANK') {
+      orders[index].status = 'WAITING'; // CHƯA THANH TOÁN
+    }
+
+    this.writeOrders(orders);
+    return orders[index];
+  }
+
+  // khi BANK chuyển khoản xong → gọi hàm này
+  confirmBankPaid(orderCode: string) {
+    const orders = this.readOrders();
+    const index = orders.findIndex(o => o.orderCode === orderCode);
+
+    if (index === -1) return null;
+
+    orders[index].status = 'PAID';
+    orders[index].paymentMethod = 'BANK';
+
+    this.writeOrders(orders);
+    return orders[index];
+  }
+
+  // ======================
+  // LIST ORDERS
+  // ======================
   listOrders(): any[] {
     return this.readOrders();
   }
-
-  cancelOrder(orderId: number): void {
-    const orders = this.readOrders();
-    const idx = orders.findIndex((o) => Number(o.id) === Number(orderId));
-    if (idx < 0) return;
-
-    // demo: nếu chưa huỷ, set status = cancelled
-    orders[idx] = {
-      ...orders[idx],
-      status: orders[idx]?.status === 'cancelled' ? 'cancelled' : 'cancelled',
-      cancelledAt: new Date().toISOString(),
-    };
-    this.writeOrders(orders);
-  }
 }
-
-
