@@ -1,0 +1,70 @@
+<div class="page">
+  <div class="shop-header">
+    <div class="title">
+      <h2>📦 Đơn hàng</h2>
+      <div class="subtitle">Theo dõi trạng thái đơn & huỷ đơn</div>
+    </div>
+
+    <div class="actions">
+      <button class="ghost" type="button" (click)="router.navigateByUrl('/products')">
+        ← Tiếp tục mua hàng
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Đang tải đơn hàng...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error">
+    <div *ngIf="orders.length === 0" class="empty">
+      <div class="empty-state">
+        <div class="empty-icon">🧾</div>
+        <div class="empty-title">Chưa có đơn hàng</div>
+        <div class="empty-desc">Bạn hãy đặt hàng ở trang checkout để xem tại đây.</div>
+        <button class="primary" type="button" (click)="router.navigateByUrl('/products')">
+          Mua sắm ngay
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="orders.length > 0" class="orders">
+      <div class="order" *ngFor="let o of orders">
+        <div class="order-top">
+          <div class="order-id">Mã đơn: <b>{{ o.id }}</b></div>
+          <div class="order-date">{{ formatDate(o.createdAt) }}</div>
+        </div>
+
+        <div class="order-status">
+          <span class="tag" [class.cancelled]="o.status === 'cancelled'">
+            {{ o.status === 'cancelled' ? 'Đã huỷ' : 'Đang xử lý' }}
+          </span>
+        </div>
+
+        <div class="order-items">
+          <div class="item" *ngFor="let it of (o.items || [])">
+            <div class="item-name">{{ it.name }}</div>
+            <div class="item-meta">x{{ it.quantity }}</div>
+            <div class="item-money">{{ money((it.price || 0) * (it.quantity || 0)) }}</div>
+          </div>
+        </div>
+
+        <div class="order-bottom">
+          <div class="total">
+            Tổng: <b>{{ money(orderTotal(o)) }}</b>
+          </div>
+
+          <div class="order-actions">
+            <button
+              class="mini danger"
+              type="button"
+              (click)="cancelOrder(o.id)"
+              [disabled]="o.status === 'cancelled'">
+              Huỷ đơn
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

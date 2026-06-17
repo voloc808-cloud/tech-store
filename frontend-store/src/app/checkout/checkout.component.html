@@ -47,12 +47,14 @@
     <aside class="shop-card summary-card" style="padding: 14px;">
       <h3 class="section-title">Đơn hàng</h3>
 
-      <div *ngFor="let it of items" class="item" style="border-top: 1px solid #f3f3f3; padding-top: 10px; margin-top: 10px;">
-        <div class="line">
-          <span class="name">{{ it.name }}</span>
-          <span class="qty">x{{ it.quantity }}</span>
+      <div class="checkout-items">
+        <div *ngFor="let it of items" class="checkout-item">
+          <div class="checkout-item-top">
+            <div class="checkout-item-name" title="{{ it.name }}">{{ it.name }}</div>
+            <div class="checkout-item-qty">x{{ it.quantity }}</div>
+          </div>
+          <div class="checkout-item-money">{{ getMoney(it.price * it.quantity) }}</div>
         </div>
-        <div class="money">{{ getMoney(it.price * it.quantity) }}</div>
       </div>
 
       <div class="total">
@@ -60,8 +62,7 @@
         <div class="value">{{ getMoney(subtotal) }}</div>
       </div>
 
-
-      <div class="note" style="margin-top: 12px; color: #7f8c8d; font-size: 13px; font-weight: 700;">
+      <div class="note">
         * Demo: checkout lưu đơn vào localStorage
       </div>
     </aside>

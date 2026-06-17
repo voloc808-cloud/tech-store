@@ -3,7 +3,7 @@
 .loading{color:var(--primary);font-weight:800;}
 .error{color:var(--danger);font-weight:800;}
 
-.box{
+.box{ 
   background:rgba(255,255,255,.92);
   border:1px solid rgba(234,234,234,.95);
   border-radius:var(--radius);

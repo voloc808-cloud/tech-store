@@ -82,6 +82,12 @@
   border-radius:10px;
   background:#fafafa;
   border:1px solid #eee;
+  cursor:pointer;
+}
+
+.userName:hover{
+  border-color:#ee4d2d;
+  color:#ee4d2d;
 }
 
 

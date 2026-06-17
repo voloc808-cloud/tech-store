@@ -6,62 +6,81 @@
     </div>
 
     <div class="actions">
+      <button class="ghost" type="button" (click)="router.navigateByUrl('/products')">← Quay lại bán hàng</button>
       <button class="ghost" type="button" (click)="clear()">Xóa hết</button>
     </div>
   </div>
 
+
+
+
+
   <div *ngIf="items.length === 0" class="empty">
-    Giỏ hàng trống.
-    <button class="primary" type="button" (click)="router.navigateByUrl('/products')">Mua sắm ngay</button>
+    <div class="empty-state">
+      <div class="empty-icon">🛍️</div>
+      <div class="empty-title">Giỏ hàng của bạn đang trống</div>
+      <div class="empty-desc">Thêm sản phẩm để bắt đầu mua sắm.</div>
+      <button class="primary" type="button" (click)="router.navigateByUrl('/products')">Mua sắm ngay</button>
+    </div>
   </div>
 
   <div *ngIf="items.length > 0" class="shop-grid">
-    <section class="shop-card">
-      <table class="shop-table">
-        <thead>
-          <tr>
-            <th>Sản phẩm</th>
-            <th>Giá</th>
-            <th>Số lượng</th>
-            <th>Thành tiền</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let it of items">
-            <td>
-              <div class="product-name">{{ it.name }}</div>
-            </td>
-            <td class="kpi-price">{{ it.price }}</td>
+    <section class="shop-card cart-list">
+      <div class="cart-rows">
+        <div *ngFor="let it of items" class="cart-item-row">
+          <div class="cart-item-img">
+            <img [src]="'/assets/product-placeholder.png'" alt="{{ it.name }}" />
+            <div class="cart-item-badge ok">Shopee</div>
+          </div>
 
-            <td>
-              <div class="qty-wrap">
-                <div class="qty-stepper">
-                  <button type="button" (click)="updateQty(it, it.quantity - 1)" [disabled]="it.quantity <= 0">-</button>
-                  <input type="number" min="0" [(ngModel)]="it.quantity" (change)="updateQty(it, it.quantity)" />
-                  <button type="button" (click)="updateQty(it, it.quantity + 1)">+</button>
-                </div>
-              </div>
-            </td>
-            <td class="kpi-price">{{ it.price * it.quantity }}</td>
+          <div class="cart-item-info">
+            <div class="cart-item-name" title="{{ it.name }}">{{ it.name }}</div>
+            <div class="cart-item-price">
+              <span class="kpi-price">{{ it.price }}</span>
+              <span class="muted">/ sản phẩm</span>
+            </div>
+          </div>
 
-            <td>
-              <button class="mini danger" type="button" (click)="remove(it)">Xóa</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+          <div class="cart-item-qty">
+            <div class="qty-stepper">
+              <button type="button" aria-label="Giảm số lượng" (click)="updateQty(it, it.quantity - 1)" [disabled]="it.quantity <= 0">-</button>
+              <input type="number" min="0" inputmode="numeric" [(ngModel)]="it.quantity" (change)="updateQty(it, it.quantity)" />
+              <button type="button" aria-label="Tăng số lượng" (click)="updateQty(it, it.quantity + 1)">+</button>
+            </div>
+          </div>
+
+          <div class="cart-item-total">
+            <div class="kpi-price total-money">{{ it.price * it.quantity }}</div>
+            <div class="muted">Thành tiền</div>
+          </div>
+
+          <div class="cart-item-actions">
+            <button class="mini danger" type="button" (click)="remove(it)">Xóa</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <aside class="shop-card summary-card">
+      <div class="summary-title">Tóm tắt đơn hàng</div>
+
       <div class="summary-row">
         <div class="label">Tạm tính</div>
         <div class="value">{{ subtotal }}</div>
+      </div>
 
+      <div class="summary-row">
+        <div class="label">Phí vận chuyển</div>
+        <div class="value">0</div>
+      </div>
+
+      <div class="summary-row total-row">
+        <div class="label">Tổng cộng</div>
+        <div class="value">{{ subtotal }}</div>
       </div>
 
       <div class="cta">
-        <button class="primary" type="button" (click)="checkout()">Tiến hành checkout</button>
+        <button class="primary" type="button" (click)="checkout()" [disabled]="items.length === 0">Tiến hành checkout</button>
       </div>
 
       <div class="note">* Demo: checkout lưu đơn vào localStorage</div>

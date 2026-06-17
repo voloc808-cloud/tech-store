@@ -19,7 +19,9 @@
       </ng-container>
 
       <ng-container *ngIf="isLoggedIn">
-        <div class="userName">👤 {{ username }}</div>
+        <button class="userName" type="button" (click)="router.navigateByUrl('/orders')">
+          👤 {{ username }}
+        </button>
         <button class="linkBtn" type="button" (click)="logout()">Logout</button>
       </ng-container>
     </div>
