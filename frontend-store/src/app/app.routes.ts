@@ -7,10 +7,14 @@ import { ProductListComponent } from './products/product-list.component';
 import { ProductDetailComponent } from './products/product-detail.component';
 import { CartComponent } from './cart/cart.component';
 import { CheckoutComponent } from './checkout/checkout.component';
-import { OrdersComponent } from './orders/orders.component';
+
+//  THÊM 2 COMPONENT MỚI( ý) 
+import { Payment } from './pages/payment/payment';
+import { OrderSuccess } from './pages/order-success/order-success';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/products', pathMatch: 'full' },
+
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
@@ -19,7 +23,12 @@ export const routes: Routes = [
 
   { path: 'cart', component: CartComponent },
   { path: 'checkout', component: CheckoutComponent },
-  { path: 'orders', component: OrdersComponent },
+
+  //  PAYMENT FLOW (BẮT BUỘC THÊM) ( ý) 
+  { path: 'payment/:orderCode', component: Payment },
+
+  // (OPTIONAL) trang hoàn tất
+  { path: 'order-success/:orderCode', component: OrderSuccess },
 
   {
     path: 'admin',
@@ -29,4 +38,3 @@ export const routes: Routes = [
 
   { path: '**', redirectTo: '/products' },
 ];
-
